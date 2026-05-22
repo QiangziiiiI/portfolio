@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>陈志强 | 摄影作品集</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Noto+Serif+SC:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -207,6 +208,9 @@
             border-radius: 4px;
             background: var(--bg-secondary);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            content-visibility: auto;
+            contain-intrinsic-size: 300px 200px;
+            will-change: transform;
         }
         
         .masonry-item:hover {
@@ -243,7 +247,11 @@
         }
         
         .masonry-item.img-loaded::before {
-            opacity: 0;
+            display: none;
+        }
+        
+        .masonry-item:not(.img-loaded)::before {
+            animation: shimmer 1.5s infinite;
         }
         
         @keyframes shimmer {
@@ -1014,7 +1022,7 @@
         // ==================== 配置 ====================
         const CONFIG = {
             basePath: 'images',
-            itemsPerPage: 12,
+            itemsPerPage: 8,
             batchSize: 4,
             batchDelay: 100,
             columns: { lg: 4, md: 3, sm: 2, xs: 1 },
@@ -1266,6 +1274,8 @@
                 
                 const img = document.createElement('img');
                 img.alt = getFileName(photo.src);
+                img.loading = 'lazy';
+                img.decoding = 'async';
                 
                 // 加载完成回调
                 const onLoad = () => {
@@ -1293,20 +1303,25 @@
             });
         }
         
-        // 批量加载
+        // 批量加载 - 并发模式
         async function loadBatch(start, end, photosList) {
-            for (let i = start; i < end; i++) {
-                // 如果分类已切换，终止加载
+            for (let i = start; i < end; i += CONFIG.batchSize) {
                 if (loadingCategory !== currentCategory) return;
-                await loadImage(photosList[i], i);
-                // 每批之间小延迟，让UI保持响应
-                if ((i - start + 1) % CONFIG.batchSize === 0) {
+                const batchEnd = Math.min(i + CONFIG.batchSize, end);
+                // 并发加载当前批次的所有图片
+                const promises = [];
+                for (let j = i; j < batchEnd; j++) {
+                    promises.push(loadImage(photosList[j], j));
+                }
+                await Promise.all(promises);
+                // 加载过程中分类未变，才执行布局
+                if (loadingCategory === currentCategory) {
+                    calculateLayout();
+                }
+                // 批次间小延迟
+                if (batchEnd < end) {
                     await new Promise(r => setTimeout(r, CONFIG.batchDelay));
                 }
-            }
-            // 加载过程中分类未变，才执行布局
-            if (loadingCategory === currentCategory) {
-                calculateLayout();
             }
         }
         
@@ -1387,13 +1402,20 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
+        let scrollTicking = false;
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 400) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
+            if (!scrollTicking) {
+                requestAnimationFrame(() => {
+                    if (window.scrollY > 400) {
+                        backToTop.classList.add('visible');
+                    } else {
+                        backToTop.classList.remove('visible');
+                    }
+                    scrollTicking = false;
+                });
+                scrollTicking = true;
             }
-        });
+        }, { passive: true });
         
         // ==================== 灯箱 ====================
         let currentIndex = 0;
