@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陈志强 | 摄影作品集</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Noto+Serif+SC:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #ffffff;
+            --bg-secondary: #fafafa;
+            --border: #e8e8e8;
+            --text: #1a1a1a;
+            --text-secondary: #666666;
+            --text-muted: #b0b0b0;
+            --accent: #0066cc;
+        }
+        
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 导航栏 */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .nav-inner {
+            padding: 1.25rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-logo {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.05rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--text);
+        }
+        
+        .nav-contact {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-contact a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-contact a:hover {
+            color: var(--accent);
+        }
+        
+        /* 移动端菜单 */
+        .menu-btn {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .menu-btn span {
+            width: 22px;
+            height: 1.5px;
+            background: var(--text);
+        }
+        
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .mobile-menu.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-menu a {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+        
+        main { padding-top: 65px; }
+        
+        /* Hero - 首屏直接展示作品 */
+        .hero {
+            padding: 2rem 3rem 0;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .hero-intro {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        
+        .hero-text h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .hero-text p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+        
+        /* 分类筛选栏 - 更简洁 */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1.25rem;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+        
+        .filter-btn.active {
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
+        }
+        
+        /* 瀑布流容器 - JS控制 */
+        .gallery {
+            padding: 0 3rem 4rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .masonry {
+            position: relative;
+        }
+        
+        .masonry-item {
+            position: absolute;
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .masonry-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        }
+        
+        .masonry-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            opacity: 0;
+        }
+        
+        .masonry-item img.loaded {
+            opacity: 1;
+        }
+        
+        .masonry-item:hover img {
+            transform: scale(1.03);
+        }
+        
+        /* 骨架屏占位 */
+        .masonry-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(110deg, var(--bg-secondary) 8%, #f0f0f0 18%, var(--bg-secondary) 33%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            transition: opacity 0.3s;
+        }
+        
+        .masonry-item.img-loaded::before {
+            opacity: 0;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* 加载更多 */
+        .load-more {
+            display: none;
+            justify-content: center;
+            padding: 3rem 0;
+        }
+        
+        .load-more-btn {
+            padding: 0.875rem 3rem;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 24px;
+            transition: all 0.25s;
+        }
+        
+        .load-more-btn:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+        
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
+            transform: translateY(-2px);
+        }
+        
+        /* 关于 */
+        .about {
+            max-width: 800px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border);
+            scroll-margin-top: 80px;
+        }
+
+        .about-section {
+            padding: 3.5rem 3rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .about-section:last-child { border-bottom: none; }
+        
+        .about-section-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 个人简介头 */
+        .about-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 2.5rem;
+        }
+        .about-avatar-frame {
+            flex-shrink: 0;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.6rem;
+            color: var(--text-secondary);
+        }
+        .about-intro h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.6rem;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+        .about-intro .tagline {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 0.8rem;
+        }
+        .about-intro .contact-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+        .about-intro .contact-row span { display: flex; align-items: center; gap: 0.3rem; }
+
+        /* 核心优势突出卡片 */
+        .highlight-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem 1.8rem;
+            line-height: 1.8;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* 经历条目 */
+        .exp-entry {
+            margin-bottom: 1.8rem;
+        }
+        .exp-entry:last-child { margin-bottom: 0; }
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.3rem 1rem;
+            margin-bottom: 0.3rem;
+        }
+        .exp-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .exp-org {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+        .exp-date {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .exp-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-weight: 300;
+            padding-left: 0;
+        }
+        .exp-desc p {
+            margin-bottom: 0.3rem;
+        }
+        .exp-desc p:last-child { margin-bottom: 0; }
+
+        /* 设备网格 */
+        .gear-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .gear-cat {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem 1.2rem;
+        }
+        .gear-cat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        .gear-cat-items {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        /* 服务标签 */
+        .service-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .service-tag {
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .service-tag:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+
+        /* 教育+荣誉并排 */
+        .info-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .info-block ul {
+            list-style: none;
+            padding: 0;
+        }
+        .info-block li {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-weight: 300;
+            padding-left: 1em;
+            position: relative;
+        }
+        .info-block li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: var(--text-muted);
+        }
+        .info-block .edu-main {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 0.2rem;
+        }
+        .info-block .edu-detail {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+        .info-block .edu-courses {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .about-section { padding: 2.5rem 1.5rem; }
+            .about-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 1.2rem;
+            }
+            .about-intro .contact-row { justify-content: center; }
+            .info-two-col { grid-template-columns: 1fr; gap: 1.5rem; }
+            .gear-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 500px) {
+            .gear-grid { grid-template-columns: 1fr; }
+        }
+        
+        /* 页脚 */
+        .footer {
+            padding: 3rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+        
+        .footer-contact {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-contact a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        
+        .footer-contact a:hover { color: var(--accent); }
+        
+        .footer-copy {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        /* 灯箱 */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            padding: 80px 60px 100px;
+        }
+        
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .lightbox-img-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            max-height: calc(100vh - 180px); /* 限制最大高度，留出 info bar 空间 */
+        }
+        
+        .lightbox img {
+            max-width: 100%;
+            max-height: calc(100vh - 220px); /* 图片本身也限制最大高度 */
+            object-fit: contain;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            border-radius: 4px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+        }
+        
+        .lightbox-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 0;
+            margin-top: 1rem;
+        }
+        
+        .lightbox-counter {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .lightbox-name {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .lightbox-category {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox-close:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+        
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .lightbox-nav:hover {
+            background: var(--text);
+            color: var(--bg);
+            transform: translateY(-50%) scale(1.05);
+        }
+        
+        .lightbox-prev { left: 1.5rem; }
+        .lightbox-next { right: 1.5rem; }
+        
+        /* 响应式 */
+        @media (max-width: 1000px) {
+            .hero, .gallery { padding-left: 2rem; padding-right: 2rem; }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-inner { padding: 1rem 1.5rem; }
+            .nav-links, .nav-contact { display: none; }
+            .menu-btn { display: flex; }
+            
+            .hero, .gallery { padding-left: 1.5rem; padding-right: 1.5rem; }
+            
+            .hero-intro {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .filter-bar {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                padding-bottom: 0.5rem;
+            }
+            
+            .filter-bar::-webkit-scrollbar { display: none; }
+            
+            .filter-btn {
+                padding: 0.4rem 1rem;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
+            
+            .back-to-top {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                width: 44px;
+                height: 44px;
+            }
+            
+            .about-section { padding: 2.5rem 1.5rem; }
+            .footer { padding: 2rem 1.5rem; }
+            
+            .footer-contact {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .lightbox-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            .lightbox-prev { left: 0.75rem; }
+            .lightbox-next { right: 0.75rem; }
+            
+            .lightbox-close {
+                top: 1rem;
+                right: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .lightbox-info {
+                bottom: 1rem;
+                padding: 0.5rem 1rem;
+                gap: 1rem;
+            }
+            
+            .lightbox-name { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-logo">陈志强</div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active">首页</a>
+                <a href="#about" class="nav-link">关于</a>
+            </div>
+            <div class="nav-contact">
+                <a href="mailto:1740188970@qq.com">1740188970@qq.com</a>
+                <span style="color:var(--text-muted);font-size:0.8rem;">QZ030114</span>
+            </div>
+            <div class="menu-btn" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单 -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#" onclick="toggleMenu()">首页</a>
+        <a href="#about" onclick="toggleMenu()">关于</a>
+        <a href="mailto:1740188970@qq.com">邮箱</a>
+    </div>
+
+    <main>
+        <!-- Hero + 筛选栏 -->
+        <section class="hero" id="hero">
+            <div class="hero-intro">
+                <div class="hero-text">
+                    <h1>摄影作品</h1>
+                    <p>婚礼 · 人像 · 风光 · 航拍 — 用镜头记录光影与瞬间</p>
+                </div>
+                
+                <!-- 分类筛选 - 简洁胶囊按钮 -->
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all">全部</button>
+                    <button class="filter-btn" data-filter="urban">城市建筑</button>
+                    <button class="filter-btn" data-filter="landscape">风光</button>
+                    <button class="filter-btn" data-filter="documentary">人文纪实</button>
+                    <button class="filter-btn" data-filter="nature">自然生态</button>
+                    <button class="filter-btn" data-filter="night">夜景</button>
+                    <button class="filter-btn" data-filter="portrait">人像</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 画廊 - JS瀑布流 -->
+        <section class="gallery" id="gallery">
+            <div class="masonry" id="masonry"></div>
+            
+            <div class="load-more" id="loadMore">
+                <button class="load-more-btn" id="loadMoreBtn">加载更多</button>
+            </div>
+        </section>
+
+        <!-- 关于 -->
+        <section class="about" id="about">
+
+            <!-- 个人简介 -->
+            <div class="about-section">
+                <div class="about-header">
+                    <div class="about-avatar-frame">陈</div>
+                    <div class="about-intro">
+                        <h1>陈志强</h1>
+                        <div class="tagline">婚礼 / 人像 / 风光 / 航拍摄影师</div>
+                        <div class="contact-row">
+                            <span>📞 18066953609</span>
+                            <span>✉️ 1740188970@qq.com</span>
+                            <span>📍 上海</span>
+                            <span>🎓 西安财经大学 · 戏剧影视文学</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 核心优势 -->
+            <div class="about-section">
+                <div class="about-section-title">核心优势</div>
+                <div class="highlight-card">
+                    婚礼/人像/风光/航拍全领域实拍经验，独立承接婚礼跟拍 8~9 场零返工；
+                    曾受安康市文旅局邀请拍摄官方宣传片，成片发布于抖音/视频号。
+                    Canon R6 + 大疆 Mavic 3 双机体系，精通 LR/PS 精修调色与 PR/DaVinci 剪辑，
+                    可独立完成从需求沟通到成片交付全流程。持 C1 驾照，可出差。
+                </div>
+            </div>
+
+            <!-- 摄影经历 -->
+            <div class="about-section">
+                <div class="about-section-title">摄影经历</div>
+
+                <div class="exp-entry">
+                    <div class="exp-header">
+                        <span class="exp-title">独立接单 · 婚礼/人像/风光摄影</span>
+                        <span class="exp-date">2022 至今</span>
+                    </div>
+                    <div class="exp-desc">
+                        <p>独立承接婚礼跟拍，全程负责拍摄及后期精修，累计完成 8~9 场，无返工记录。</p>
+                        <p>人像写真、情侣照、家庭照拍摄，按需布光（神牛闪光灯 + 柔光箱 + 反光板）。</p>
+                        <p>秦岭及周边风光创作，Mavic 3 航拍 + 地面广角，兼顾宏观叙事与细节质感。</p>
+                    </div>
+                </div>
+
+                <div class="exp-entry">
+                    <div class="exp-header">
+                        <span class="exp-title">安康市文旅广电局 · 受邀宣传片摄影</span>
+                        <span class="exp-date">2024.06</span>
+                    </div>
+                    <div class="exp-desc">
+                        <p>"影像陕西"72 小时影像大赛框架下，以核心摄影师身份受邀参与官方宣传拍摄。</p>
+                        <p>主导航拍镜头设计，72 小时内完成瀛湖、龙舟文化园等多景区取景。</p>
+                        <p>成片发布于安康文旅官方账号，助力文旅推广；团队入围终审展映。</p>
+                    </div>
+                </div>
+
+                <div class="exp-entry">
+                    <div class="exp-header">
+                        <span class="exp-title">天使之爱行知研学营 · 活动摄影师</span>
+                        <span class="exp-date">2023.07 – 2023.08</span>
+                    </div>
+                    <div class="exp-desc">
+                        参与中华少年儿童慈善救助基金会 &amp; 白求恩基金会联合举办的甘肃庆阳公益研学营，负责全流程活动摄影记录。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 媒体运营与项目经历 -->
+            <div class="about-section">
+                <div class="about-section-title">媒体运营与项目经历</div>
+
+                <div class="exp-entry">
+                    <div class="exp-header">
+                        <span class="exp-title">西安财经大学党委宣传部 · 新媒体中心主任</span>
+                        <span class="exp-date">2023.09 – 2025.07</span>
+                    </div>
+                    <div class="exp-desc">
+                        <p>统筹抖音、视频号、B站全平台内容生产，全年总播放量突破 500 万，单条最高 50 万+。</p>
+                        <p>亲自担任核心摄影师，独立完成多场校级活动专题拍摄与影像记录。</p>
+                        <p>建立标准化内容管控与跨部门协作机制，采编效率提升 30%。</p>
+                    </div>
+                </div>
+
+                <div class="exp-entry">
+                    <div class="exp-header">
+                        <span class="exp-title">陕西广电融媒体集团 · 导播助理（实习）</span>
+                        <span class="exp-date">2023.05 – 2023.06</span>
+                    </div>
+                    <div class="exp-desc">
+                        参与省级节目《唱支山歌给党听》录制全流程，负责朗诵环节收音设备调试；全程跟进 5 场彩排及正式直播，实现收音零失误。
+                    </div>
+                </div>
+
+                <div class="exp-entry">
+                    <div class="exp-header">
+                        <span class="exp-title">全国大学生软件创新大赛 · 导播助理</span>
+                        <span class="exp-date">2022.05</span>
+                    </div>
+                    <div class="exp-desc">
+                        负责决赛直播多机位画面切换，精准协调主舞台、选手路演、评委点评等场景镜头调度；保障 3 小时直播零失误，赛后形成标准化导播流程。
+                    </div>
+                </div>
+
+                <div class="exp-entry">
+                    <div class="exp-header">
+                        <span class="exp-title">"互联网+" 创新创业大赛 · 核心成员</span>
+                        <span class="exp-date">2022.03 – 2022.08</span>
+                    </div>
+                    <div class="exp-desc">
+                        负责技术方案转化为标准化图文计划书，独立完成项目宣传短片、答辩视频剪辑与多版本迭代。项目获陕西赛区省级银奖。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设备器材 -->
+            <div class="about-section">
+                <div class="about-section-title">设备器材</div>
+                <div class="gear-grid">
+                    <div class="gear-cat">
+                        <div class="gear-cat-label">拍摄</div>
+                        <div class="gear-cat-items">Canon EOS R6<br>大疆 Mavic 3</div>
+                    </div>
+                    <div class="gear-cat">
+                        <div class="gear-cat-label">镜头</div>
+                        <div class="gear-cat-items">24-70mm f/2.8<br>50mm f/1.8<br>12-24mm f/5.6</div>
+                    </div>
+                    <div class="gear-cat">
+                        <div class="gear-cat-label">灯光</div>
+                        <div class="gear-cat-items">神牛 AD860 III<br>柔光箱 / 30cm &amp; 1.5m 反光板</div>
+                    </div>
+                    <div class="gear-cat">
+                        <div class="gear-cat-label">后期</div>
+                        <div class="gear-cat-items">Lightroom / Photoshop<br>Premiere Pro / DaVinci Resolve</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 教育经历 + 荣誉奖励 -->
+            <div class="about-section">
+                <div class="about-section-title">教育 &amp; 荣誉</div>
+                <div class="info-two-col">
+                    <div class="info-block">
+                        <div class="edu-main">西安财经大学 · 戏剧影视文学 · 本科</div>
+                        <div class="edu-detail">2021.09 – 2025.06</div>
+                        <div class="edu-courses">主修：影视创作、中外戏剧史、中外电影史、新媒体运营、视听语言</div>
+                        <div class="edu-detail" style="margin-top:0.4rem;">在校任职：党委宣传部新媒体中心主任、影像部部长</div>
+                    </div>
+                    <div class="info-block">
+                        <ul>
+                            <li>"影像陕西"72 小时影像创作大赛 · 入围终审展映（2024）</li>
+                            <li>"互联网+" 创新创业大赛 · 陕西赛区省级银奖（2022）</li>
+                            <li>西安财经大学校级优秀学生干部（2024）</li>
+                            <li>西安财经大学校级优秀学生记者（2023）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 可提供服务 -->
+            <div class="about-section">
+                <div class="about-section-title">可提供服务</div>
+                <div class="service-tags">
+                    <span class="service-tag">婚礼跟拍</span>
+                    <span class="service-tag">人像写真</span>
+                    <span class="service-tag">风光航拍</span>
+                    <span class="service-tag">建筑空间</span>
+                    <span class="service-tag">活动记录</span>
+                    <span class="service-tag">宣传片</span>
+                    <span class="service-tag">商业短片</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="footer-contact">
+                <a href="mailto:1740188970@qq.com">1740188970@qq.com</a>
+                <span style="color:var(--text-muted);font-size:0.85rem;">QZ030114</span>
+            </div>
+            <p class="footer-copy">© 2025 陈志强</p>
+        </footer>
+    </main>
+
+    <!-- 回到顶部 -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <!-- 灯箱 -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">×</button>
+        <button class="lightbox-nav lightbox-prev" onclick="prevImage()">‹</button>
+        <div class="lightbox-img-container">
+            <img id="lightboxImg" src="" alt="">
+        </div>
+        <button class="lightbox-nav lightbox-next" onclick="nextImage()">›</button>
+        <div class="lightbox-info">
+            <span class="lightbox-category" id="lightboxCategory">城市建筑</span>
+            <span class="lightbox-counter" id="lightboxCounter">1 / 54</span>
+            <span class="lightbox-name" id="lightboxName">IMG_1234.jpg</span>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 配置 ====================
+        const CONFIG = {
+            basePath: 'images',
+            itemsPerPage: 12,
+            batchSize: 4,
+            batchDelay: 100,
+            columns: { lg: 4, md: 3, sm: 2, xs: 1 },
+            gap: 16
+        };
+        
+        // ==================== 数据 ====================
+        const photos = {
+            urban: [
+                { src: '城市建筑/2023-08-28 055226.jpg', ratio: 1.5 },
+                { src: '城市建筑/2023-09-01 175645.jpg', ratio: 0.67 },
+                { src: '城市建筑/2023-09-15 003114.jpg', ratio: 1.5 },
+                { src: '城市建筑/2023-10-15 225336.jpg', ratio: 0.75 },
+                { src: '城市建筑/2024-02-14 002004.jpg', ratio: 1.33 },
+                { src: '城市建筑/2024-06-03 122344.jpg', ratio: 0.67 },
+                { src: '城市建筑/2024-06-19 000938.jpg', ratio: 1.5 },
+                { src: '城市建筑/2024-07-19 224138.jpg', ratio: 0.75 },
+                { src: '城市建筑/2024-07-19 224202.jpg', ratio: 1.5 },
+                { src: '城市建筑/2024-07-19 234705.jpg', ratio: 0.67 },
+                { src: '城市建筑/2024-08-02 185908.jpg', ratio: 1.33 },
+                { src: '城市建筑/2024-08-02 191227.jpg', ratio: 0.75 },
+                { src: '城市建筑/2025-01-06 181043.jpg', ratio: 1.5 },
+                { src: '城市建筑/2025-01-21 200857.jpg', ratio: 0.67 },
+                { src: '城市建筑/2025-01-29 115611.jpg', ratio: 1.33 },
+                { src: '城市建筑/2025-01-29 175719.jpg', ratio: 0.75 },
+                { src: '城市建筑/2025-01-29 175729.jpg', ratio: 1.5 },
+                // { src: '城市建筑/2025-06-15 184312.heic', ratio: 0.67 }, // heic格式浏览器不支持
+                { src: '城市建筑/2025-06-19 191239.jpg', ratio: 1.5 },
+                { src: '城市建筑/2025-07-07 210558.jpg', ratio: 0.75 },
+                { src: '城市建筑/2025-08-14 164942.jpg', ratio: 1.33 },
+                { src: '城市建筑/2025-10-01 190621.jpg', ratio: 0.67 },
+                { src: '城市建筑/2025-12-26 213039.jpg', ratio: 1.5 }
+            ],
+            landscape: [
+                { src: '风光/2023-07-27 232136.jpg', ratio: 1.5 },
+                { src: '风光/2024-05-04 154850.jpg', ratio: 0.67 },
+                { src: '风光/2025-10-21 100419.jpg', ratio: 1.33 },
+                { src: '风光/2025-10-27 103416.jpg', ratio: 0.75 },
+                { src: '风光/2025-10-29 213251.jpg', ratio: 1.5 },
+                { src: '风光/2025-10-31 225855.jpg', ratio: 0.67 }
+            ],
+            documentary: [
+                { src: '人文纪实/2022-09-29 143426.jpg', ratio: 1.33 },
+                { src: '人文纪实/2023-01-14 143415.jpg', ratio: 0.67 },
+                { src: '人文纪实/2023-01-31 233416.jpg', ratio: 1.5 },
+                { src: '人文纪实/2023-02-01 235313.jpg', ratio: 0.75 },
+                { src: '人文纪实/2023-08-29 172211.jpg', ratio: 1.33 },
+                { src: '人文纪实/2023-11-14 135422.jpg', ratio: 0.67 },
+                { src: '人文纪实/2026-02-20 090142.jpg', ratio: 1.5 },
+                { src: '人文纪实/2025-12-08 093215.jpg', ratio: 0.75 },
+                { src: '人文纪实/2026-03-03 192923.jpg', ratio: 1.5 }
+            ],
+            nature: [
+                { src: '自然生态/2023-03-30 154827.jpg', ratio: 0.75 },
+                { src: '自然生态/2023-03-30 154828.jpg', ratio: 1.5 },
+                { src: '自然生态/2024-02-20 173046.jpg', ratio: 0.67 },
+                { src: '自然生态/2024-06-25 210623.jpg', ratio: 1.33 },
+                { src: '自然生态/2026-03-15 180002.jpg', ratio: 0.75 },
+                { src: '自然生态/2026-03-20 163307.jpg', ratio: 1.5 },
+                { src: '自然生态/2026-03-20 163307(1).jpg', ratio: 0.67 },
+                { src: '自然生态/2026-03-20 163307(3).jpg', ratio: 1.33 },
+                { src: '自然生态/2026-03-20 163311.jpg', ratio: 0.75 },
+                { src: '自然生态/2026-03-20 163311(1).jpg', ratio: 1.5 }
+            ],
+            night: [
+                { src: '夜景/2023-02-05 200339.jpg', ratio: 1.5 },
+                { src: '夜景/2023-02-05 201310.jpg', ratio: 0.67 },
+                { src: '夜景/2023-03-08 190529.jpg', ratio: 1.33 },
+                { src: '夜景/2023-05-22 200137.jpg', ratio: 0.75 },
+                { src: '夜景/2024-06-19 001003.jpg', ratio: 1.5 },
+                { src: '夜景/2024-08-01 200742.jpg', ratio: 0.67 },
+                { src: '夜景/2024-08-02 203007.jpg', ratio: 1.33 },
+                { src: '夜景/2025-07-10 233008.jpg', ratio: 0.75 },
+                { src: '夜景/2025-07-10 233018.jpg', ratio: 1.5 },
+                { src: '夜景/2025-07-24 200526.jpg', ratio: 0.67 },
+                { src: '夜景/2025-12-11 235515.jpg', ratio: 1.33 },
+                { src: '夜景/2025-12-11 235516.jpg', ratio: 0.75 },
+                { src: '夜景/2026-02-14 203511.jpg', ratio: 1.5 },
+                { src: '夜景/2026-03-11 202331.jpg', ratio: 0.67 },
+                { src: '夜景/2026-03-11 202734.jpg', ratio: 1.33 },
+                { src: '夜景/2026-03-12 180624.jpg', ratio: 0.75 }
+            ],
+            portrait: [
+                { src: '人像/04accfc2269ba0448578171f15ad37d4.jpg', ratio: 0.67 },
+                { src: '人像/0ee063992559dd686abc430a41078ab2.jpg', ratio: 0.67 },
+                { src: '人像/190468e91031759fbedfe29b6b25b061.jpg', ratio: 0.67 },
+                { src: '人像/19f7c5a1579290f2e2af8c934cae8624.jpg', ratio: 0.67 },
+                { src: '人像/208f315aa9b9e058725a863951d53b7f.jpg', ratio: 0.67 },
+                { src: '人像/23489ded670e0e1d298c85bc62068544.jpg', ratio: 1.78 },
+                { src: '人像/33ed835437474bec4f0dedc771a65b72.jpg', ratio: 0.67 },
+                { src: '人像/3ed633b4a339c69a3609dec2f16c8d9c.jpg', ratio: 0.67 },
+                { src: '人像/49a6ea41428f996adfb5df74c634f347.jpg', ratio: 1.5 },
+                { src: '人像/4a0b1bf050ba655b1f5169f8fce2cee9.jpg', ratio: 0.67 },
+                { src: '人像/4aa199dca39356c4f15e82dcd6ee10ed.jpg', ratio: 0.67 },
+                { src: '人像/55244d369546c229145b348d4b3dbffc.jpg', ratio: 0.67 },
+                { src: '人像/68fc0eae6e3820476b5e5e7eea0185c1.jpg', ratio: 0.65 },
+                { src: '人像/8730bb6af8c526086a6755a43756692a.jpg', ratio: 1.5 },
+                { src: '人像/9128e8bbf81921e2910626d544e2c9c6.jpg', ratio: 0.67 },
+                { src: '人像/96c00e60d56da6e8f4431f72363cca29.jpg', ratio: 1.5 },
+                { src: '人像/9a4c324a85f40bb30d1680023dcca65a.jpg', ratio: 0.67 },
+                { src: '人像/9f9a6c2384879f710bc4c6e6739cd4e8.jpg', ratio: 0.67 },
+                { src: '人像/IMG_2181.jpg', ratio: 0.67 },
+                { src: '人像/IMG_5422.jpg', ratio: 0.75 },
+                { src: '人像/IMG_5423.jpg', ratio: 0.67 },
+                { src: '人像/IMG_6329.jpg', ratio: 1.5 },
+                { src: '人像/IMG_6373.jpg', ratio: 1.5 },
+                { src: '人像/IMG_7742.jpg', ratio: 0.67 },
+                { src: '人像/_40A0327.jpg', ratio: 1.5 },
+                { src: '人像/_40A1491.jpg', ratio: 1.5 },
+                { src: '人像/a6d5338649125ae0c5ad995893d63a32.jpg', ratio: 0.67 },
+                { src: '人像/b067303d1d38384debaef0cf78d9b0b4.jpg', ratio: 0.67 },
+                { src: '人像/cbc5d82a248afaa15033cfb15f724e3c.jpg', ratio: 0.67 },
+                { src: '人像/e228a9207b8d6e93d179791e177dddfb.jpg', ratio: 0.68 },
+                { src: '人像/e834cce778876e25b3eabaf01fb3dee1.jpg', ratio: 1.5 },
+                { src: '人像/edfc8f367cf038a4c8f1b886cc4bfda9.jpg', ratio: 0.75 },
+                { src: '人像/ff84e3c1ec2fe677033df6dc0e9e4528.jpg', ratio: 0.67 }
+            ]
+        };
+        
+        const categoryNames = {
+            urban: '城市建筑',
+            landscape: '风光',
+            documentary: '人文纪实',
+            nature: '自然生态',
+            night: '夜景',
+            portrait: '人像'
+        };
+        
+        // ==================== 状态 ====================
+        let currentCategory = 'all';
+        let displayedCount = 0;
+        let currentPhotos = [];  // 缓存当前分类的照片列表
+        let loadingCategory = null;  // 当前正在加载的分类，用于防止切换错乱
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        // ==================== DOM ====================
+        const masonry = document.getElementById('masonry');
+        const loadMore = document.getElementById('loadMore');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxCounter = document.getElementById('lightboxCounter');
+        const lightboxName = document.getElementById('lightboxName');
+        const lightboxCategory = document.getElementById('lightboxCategory');
+        const backToTop = document.getElementById('backToTop');
+        
+        // ==================== 工具函数 ====================
+        function getFullPath(src) {
+            // 处理路径编码
+            const base = CONFIG.basePath ? CONFIG.basePath + '/' : '';
+            const path = base + src;
+            // 对路径进行编码，处理中文文件名
+            return encodeURI(path);
+        }
+        
+        function getFileName(src) {
+            return src.split('/').pop();
+        }
+        
+        function getAllPhotos() {
+            let all = [];
+            Object.keys(photos).forEach(cat => {
+                photos[cat].forEach(p => {
+                    all.push({ ...p, category: cat });
+                });
+            });
+            // 打乱顺序
+            return all.sort(() => Math.random() - 0.5);
+        }
+        
+        function getFilteredPhotos(category) {
+            // 全部分类使用缓存，避免每次重新随机
+            if (category === 'all') {
+                if (currentPhotos.length === 0 || currentPhotos[0].cacheKey !== 'all') {
+                    // 生成稳定顺序的列表
+                    currentPhotos = getAllPhotos().map((p, i) => ({ ...p, _originalIndex: i, cacheKey: 'all' }));
+                }
+                return currentPhotos;
+            }
+            // 其他分类也使用缓存
+            const cacheKey = category;
+            if (currentPhotos.length === 0 || currentPhotos[0].cacheKey !== cacheKey) {
+                currentPhotos = photos[category].map((p, i) => ({ ...p, category, _originalIndex: i, cacheKey }));
+            }
+            return currentPhotos;
+        }
+        
+        // ==================== 瀑布流布局 ====================
+        function getColumns() {
+            const width = window.innerWidth;
+            if (width > 1000) return CONFIG.columns.lg;
+            if (width > 700) return CONFIG.columns.md;
+            if (width > 500) return CONFIG.columns.sm;
+            return CONFIG.columns.xs;
+        }
+        
+        function calculateLayout() {
+            const columns = getColumns();
+            const containerWidth = masonry.offsetWidth;
+            const gap = CONFIG.gap;
+            const colWidth = (containerWidth - gap * (columns - 1)) / columns;
+            
+            // 获取每张图片的高度
+            const items = masonry.querySelectorAll('.masonry-item');
+            const colHeights = new Array(columns).fill(0);
+            
+            // 使用 transform 避免触发重排
+            items.forEach((item) => {
+                const ratio = parseFloat(item.dataset.ratio) || 1.5;
+                const height = colWidth / ratio;
+                
+                // 找到最短的列
+                let minCol = 0;
+                let minHeight = colHeights[0];
+                for (let i = 1; i < columns; i++) {
+                    if (colHeights[i] < minHeight) {
+                        minHeight = colHeights[i];
+                        minCol = i;
+                    }
+                }
+                
+                // 计算位置
+                const x = minCol * (colWidth + gap);
+                const y = colHeights[minCol];
+                
+                item.style.width = colWidth + 'px';
+                item.style.height = height + 'px';
+                // 使用 transform 而非 top/left
+                item.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                
+                colHeights[minCol] += height + gap;
+            });
+            
+            // 设置容器高度
+            const maxHeight = Math.max(...colHeights);
+            masonry.style.height = maxHeight + 'px';
+        }
+        
+        // ==================== 加载照片 ====================
+        function loadImage(photo, displayIndex) {
+            return new Promise(resolve => {
+                const item = document.createElement('div');
+                item.className = 'masonry-item';
+                item.dataset.ratio = photo.ratio || 1.5;
+                // 使用 _originalIndex 作为 lightbox 定位的索引
+                item.dataset.index = photo._originalIndex !== undefined ? photo._originalIndex : displayIndex;
+                
+                const img = document.createElement('img');
+                img.alt = getFileName(photo.src);
+                
+                // 加载完成回调
+                const onLoad = () => {
+                    img.classList.add('loaded');
+                    item.classList.add('img-loaded');
+                    resolve();
+                };
+                
+                img.onload = onLoad;
+                img.onerror = () => {
+                    // 失败时也标记完成
+                    img.classList.add('loaded');
+                    item.classList.add('img-loaded');
+                    resolve();
+                };
+                
+                // 设置图片源开始加载
+                img.src = getFullPath(photo.src);
+                
+                item.appendChild(img);
+                // 点击时使用 _originalIndex 打开 lightbox
+                const lightboxIndex = photo._originalIndex !== undefined ? photo._originalIndex : displayIndex;
+                item.onclick = () => openLightbox(lightboxIndex);
+                masonry.appendChild(item);
+            });
+        }
+        
+        // 批量加载
+        async function loadBatch(start, end, photosList) {
+            for (let i = start; i < end; i++) {
+                // 如果分类已切换，终止加载
+                if (loadingCategory !== currentCategory) return;
+                await loadImage(photosList[i], i);
+                // 每批之间小延迟，让UI保持响应
+                if ((i - start + 1) % CONFIG.batchSize === 0) {
+                    await new Promise(r => setTimeout(r, CONFIG.batchDelay));
+                }
+            }
+            // 加载过程中分类未变，才执行布局
+            if (loadingCategory === currentCategory) {
+                calculateLayout();
+            }
+        }
+        
+        function loadMorePhotos() {
+            const photosList = getFilteredPhotos(currentCategory);
+            const start = displayedCount;
+            const end = Math.min(start + CONFIG.itemsPerPage, photosList.length);
+            
+            if (start >= end) {
+                loadMore.style.display = 'none';
+                return;
+            }
+            
+            loadMoreBtn.disabled = true;
+            loadMoreBtn.textContent = '加载中...';
+            
+            loadingCategory = currentCategory;
+            
+            loadBatch(start, end, photosList).then(() => {
+                displayedCount = end;
+                loadMoreBtn.disabled = false;
+                loadMoreBtn.textContent = '加载更多';
+                
+                if (displayedCount >= photosList.length) {
+                    loadMore.style.display = 'none';
+                }
+                
+                // 预加载接下来的图片
+                preloadUpcoming(photosList);
+            });
+        }
+        
+        // 预加载即将显示的图片
+        function preloadUpcoming(photosList) {
+            const nextStart = displayedCount;
+            const nextEnd = Math.min(nextStart + 6, photosList.length);
+            
+            for (let i = nextStart; i < nextEnd; i++) {
+                const preload = new Image();
+                preload.src = getFullPath(photosList[i].src);
+            }
+        }
+        
+        // ==================== 分类切换 ====================
+        function switchCategory(category) {
+            if (category === currentCategory) return;
+            
+            // 如果灯箱开着，先关闭
+            if (lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+            
+            currentCategory = category;
+            displayedCount = 0;
+            // 清空缓存，下次获取时会重新生成
+            currentPhotos = [];
+            
+            // 更新按钮状态
+            filterBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === category);
+            });
+            
+            // 清空并重新加载
+            masonry.innerHTML = '';
+            
+            const photosList = getFilteredPhotos(currentCategory);
+            if (photosList.length <= CONFIG.itemsPerPage) {
+                loadMore.style.display = 'none';
+            } else {
+                loadMore.style.display = 'flex';
+            }
+            
+            loadMorePhotos();
+        }
+        
+        // ==================== 回到顶部 ====================
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        
+        // ==================== 灯箱 ====================
+        let currentIndex = 0;
+        let isTransitioning = false;
+        
+        function getCurrentPhotos() {
+            return getFilteredPhotos(currentCategory);
+        }
+        
+        function openLightbox(index) {
+            const photosList = getCurrentPhotos();
+            // 如果传入的是 _originalIndex，需要找到对应的照片
+            let photoIndex = index;
+            let photo = photosList[photoIndex];
+            
+            // 如果没找到，用 index 属性查找
+            if (!photo) {
+                photoIndex = photosList.findIndex(p => p._originalIndex === index);
+                if (photoIndex === -1) photoIndex = index;
+                photo = photosList[photoIndex];
+            }
+            
+            if (!photo) return;
+            
+            currentIndex = photoIndex;
+            
+            lightboxImg.src = getFullPath(photo.src);
+            lightboxImg.style.opacity = '1';
+            lightboxImg.style.transform = 'scale(1)';
+            lightboxCounter.textContent = `${currentIndex + 1} / ${photosList.length}`;
+            lightboxName.textContent = getFileName(photo.src);
+            lightboxCategory.textContent = categoryNames[photo.category] || '全部';
+            
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // 预加载
+            preloadLightboxImages();
+        }
+        
+        function preloadLightboxImages() {
+            const photosList = getCurrentPhotos();
+            // 预加载前后各4张
+            for (let i = 1; i <= 4; i++) {
+                const nextIdx = (currentIndex + i) % photosList.length;
+                const prevIdx = (currentIndex - i + photosList.length) % photosList.length;
+                
+                const nextImg = new Image();
+                nextImg.src = getFullPath(photosList[nextIdx].src);
+                
+                const prevImg = new Image();
+                prevImg.src = getFullPath(photosList[prevIdx].src);
+            }
+        }
+        
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        async function prevImage() {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            
+            // 淡出
+            lightboxImg.style.opacity = '0';
+            lightboxImg.style.transform = 'scale(0.95) translateX(10px)';
+            
+            await new Promise(r => setTimeout(r, 150));
+            
+            const photosList = getCurrentPhotos();
+            currentIndex = (currentIndex - 1 + photosList.length) % photosList.length;
+            const photo = photosList[currentIndex];
+            
+            lightboxImg.src = getFullPath(photo.src);
+            lightboxCounter.textContent = `${currentIndex + 1} / ${photosList.length}`;
+            lightboxName.textContent = getFileName(photo.src);
+            lightboxCategory.textContent = categoryNames[photo.category] || '全部';
+            
+            // 淡入
+            lightboxImg.style.transform = 'scale(0.95) translateX(-10px)';
+            requestAnimationFrame(() => {
+                lightboxImg.style.opacity = '1';
+                lightboxImg.style.transform = 'scale(1) translateX(0)';
+            });
+            
+            isTransitioning = false;
+        }
+        
+        async function nextImage() {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            
+            // 淡出
+            lightboxImg.style.opacity = '0';
+            lightboxImg.style.transform = 'scale(0.95) translateX(-10px)';
+            
+            await new Promise(r => setTimeout(r, 150));
+            
+            const photosList = getCurrentPhotos();
+            currentIndex = (currentIndex + 1) % photosList.length;
+            const photo = photosList[currentIndex];
+            
+            lightboxImg.src = getFullPath(photo.src);
+            lightboxCounter.textContent = `${currentIndex + 1} / ${photosList.length}`;
+            lightboxName.textContent = getFileName(photo.src);
+            lightboxCategory.textContent = categoryNames[photo.category] || '全部';
+            
+            // 淡入
+            lightboxImg.style.transform = 'scale(0.95) translateX(10px)';
+            requestAnimationFrame(() => {
+                lightboxImg.style.opacity = '1';
+                lightboxImg.style.transform = 'scale(1) translateX(0)';
+            });
+            
+            isTransitioning = false;
+        }
+        
+        // ==================== 事件 ====================
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') prevImage();
+            if (e.key === 'ArrowRight') nextImage();
+        });
+        
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+        
+        filterBtns.forEach(btn => {
+            btn.onclick = () => switchCategory(btn.dataset.filter);
+        });
+        
+        loadMoreBtn.onclick = loadMorePhotos;
+        
+        function toggleMenu() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+        
+        // ==================== 移动端手势 ====================
+        lightbox.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        
+        lightbox.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextImage();
+                } else {
+                    prevImage();
+                }
+            }
+        }, { passive: true });
+        
+        // ==================== 响应式 ====================
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                calculateLayout();
+            }, 100);
+        });
+        
+        // ==================== 初始化 ====================
+        window.addEventListener('load', () => {
+            loadMorePhotos();
+        });
+    </script>
+</body>
+</html>
