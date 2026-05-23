@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作品集 — 陈志强</title>
+<style>
+:root{
+  --spring-soft:cubic-bezier(0.22,0.61,0.36,1);
+  --spring-bouncy:cubic-bezier(0.34,1.56,0.64,1);
+  --spring-smooth:cubic-bezier(0.25,0.46,0.45,0.94);
+  --blue:#0071e3;--blue-soft:#0A84FF;
+  --text:#f5f5f7;--text-secondary:rgba(255,255,255,0.65);
+  --bg:#000000;--glass-bg:rgba(28,28,30,0.72);
+  --glass-border:rgba(255,255,255,0.08);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.12) transparent}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;
+  background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 30% 10%,rgba(10,132,255,0.06) 0%,transparent 50%),
+    radial-gradient(ellipse 60% 70% at 70% 80%,rgba(120,60,240,0.05) 0%,transparent 50%);
+  background-attachment:fixed;
+}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+a{color:inherit;text-decoration:none}
+
+/* Scroll Progress */
+.scroll-progress{
+  position:fixed;top:0;left:0;height:2px;z-index:200;
+  background:linear-gradient(90deg,var(--blue-soft),#5E5CE6);
+  border-radius:0 1px 1px 0;
+}
+
+/* Navigation */
+.nav{
+  position:fixed;top:16px;left:20px;z-index:100;
+  height:46px;display:flex;align-items:center;gap:28px;padding:0 24px;
+  /* Multi-layer dark glass */
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.08) 0%,rgba(255,255,255,0.0) 35%,rgba(255,255,255,0.03) 100%),
+    linear-gradient(105deg,rgba(255,255,255,0.1) 0%,transparent 38%),
+    rgba(28,28,30,0.48);
+  backdrop-filter:blur(50px) saturate(180%);
+  -webkit-backdrop-filter:blur(50px) saturate(180%);
+  border:0.5px solid rgba(255,255,255,0.1);
+  border-radius:23px;
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.06),
+    0 2px 12px rgba(0,0,0,0.4);
+  transition:all 0.6s var(--spring-soft);
+}
+.nav.docked{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.1) 0%,rgba(255,255,255,0.0) 35%,rgba(255,255,255,0.04) 100%),
+    linear-gradient(105deg,rgba(255,255,255,0.12) 0%,transparent 38%),
+    rgba(28,28,30,0.65);
+  backdrop-filter:blur(64px) saturate(200%);
+  -webkit-backdrop-filter:blur(64px) saturate(200%);
+  border-color:rgba(255,255,255,0.06);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.04),
+    0 8px 32px rgba(0,0,0,0.5);
+}
+.nav-logo{font-size:14px;font-weight:700;letter-spacing:-0.4px;white-space:nowrap}
+.nav-logo span{background:linear-gradient(135deg,var(--blue-soft),#5E5CE6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:24px}
+.nav-links a{
+  font-size:13px;font-weight:450;color:rgba(255,255,255,0.50);
+  padding:6px 2px;position:relative;
+  transition:color 0.35s var(--spring-soft);
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%) scaleX(0);
+  width:70%;height:1.5px;background:var(--blue-soft);border-radius:1px;
+  transition:transform 0.4s var(--spring-bouncy);
+}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-links a:hover::after,.nav-links a.active::after{transform:translateX(-50%) scaleX(1)}
+.nav-cta{
+  font-size:12px;font-weight:620;white-space:nowrap;
+  padding:7px 17px;
+  background:rgba(10,132,255,0.15);
+  border:0.6px solid rgba(10,132,255,0.25);border-radius:980px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:#fff;
+  box-shadow:inset 0 0.5px 0 rgba(255,255,255,0.15);
+  transition:all 0.4s var(--spring-bouncy);cursor:pointer;
+}
+.nav-cta:hover{
+  background:rgba(10,132,255,0.24);
+  border-color:rgba(10,132,255,0.4);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.2),
+    0 0 20px rgba(10,132,255,0.1);
+  transform:scale(1.04);
+}
+.nav-cta:active{transform:scale(0.96)}
+
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;background:none;border:none;padding:6px}
+.hamburger span{display:block;width:17px;height:1.5px;background:rgba(255,255,255,0.8);border-radius:1px;
+  transition:all 0.4s var(--spring-bouncy)}
+.mobile-menu{
+  display:flex;position:fixed;inset:0;z-index:99;
+  background:rgba(0,0,0,0.88);
+  backdrop-filter:blur(70px) saturate(240%);
+  -webkit-backdrop-filter:blur(70px) saturate(240%);
+  flex-direction:column;padding:100px 36px 36px;gap:28px;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.35s var(--spring-soft);
+}
+.mobile-menu.reveal{opacity:1;pointer-events:auto}
+.mobile-menu a{
+  font-size:26px;font-weight:700;color:rgba(255,255,255,0.45);
+  transition:all 0.35s var(--spring-bouncy);letter-spacing:-0.5px;
+}
+.mobile-menu a:hover,.mobile-menu a.active{color:#fff;transform:translateX(6px)}
+
+/* ===== Page Header ===== */
+.page-header{
+  padding:160px 40px 30px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.page-header::before{
+  content:'';position:absolute;top:-50%;left:50%;transform:translateX(-50%);
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(10,132,255,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.page-header h1{
+  font-size:clamp(40px,6vw,68px);font-weight:760;letter-spacing:-2.2px;line-height:1.05;
+  margin-bottom:16px;position:relative;
+  background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,0.55) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  opacity:0;transform:translateY(24px);
+  animation:springUp 0.85s var(--spring-soft) 0.05s forwards;
+}
+.subtitle{
+  display:inline-block;padding:9px 22px;
+  background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border:0.8px solid rgba(255,255,255,0.08);border-radius:980px;
+  font-size:13px;font-weight:540;color:rgba(255,255,255,0.45);
+  letter-spacing:0.3px;
+  opacity:0;transform:translateY(16px);
+  animation:springUp 0.8s var(--spring-soft) 0.14s forwards;
+}
+
+@keyframes springUp{
+  0%{opacity:0;transform:translateY(24px)}
+  60%{opacity:1;transform:translateY(-4px)}
+  80%{transform:translateY(1px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+/* ===== Filter Pills (Spring + Glass) ===== */
+.filter-bar{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:8px;
+  padding:12px 20px 52px;position:relative;z-index:10;
+}
+.filter-btn{
+  padding:10px 22px;font-size:12px;font-weight:540;font-family:inherit;
+  /* Dark glass pill */
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.0) 40%,rgba(255,255,255,0.03) 100%),
+    rgba(255,255,255,0.04);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:0.6px solid rgba(255,255,255,0.06);border-radius:980px;
+  color:rgba(255,255,255,0.52);cursor:pointer;
+  box-shadow:inset 0 0.5px 0 rgba(255,255,255,0.04);
+  transition:all 0.45s var(--spring-bouncy);
+  position:relative;overflow:hidden;
+}
+.filter-btn::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 120% 80% at var(--mx,50%) var(--my,50%),
+    rgba(255,255,255,0.08) 0%,transparent 60%);
+  opacity:0;transition:opacity 0.45s;
+}
+.filter-btn:hover{
+  background:rgba(255,255,255,0.08);
+  border-color:rgba(255,255,255,0.14);
+  color:rgba(255,255,255,0.88);
+  transform:translateY(-2px);
+  box-shadow:0 8px 30px rgba(0,0,0,0.4);
+}
+.filter-btn:hover::before{opacity:1}
+.filter-btn.active{
+  background:rgba(10,132,255,0.22);
+  border-color:rgba(10,132,255,0.45);
+  color:var(--blue-soft);font-weight:680;
+  box-shadow:0 0 36px rgba(10,132,255,0.12),inset 0 1px 0 rgba(10,132,255,0.15);
+  transform:scale(1.05);
+}
+.filter-btn.active:hover{
+  transform:scale(1.05) translateY(-2px);
+}
+
+/* ===== Gallery Masonry ===== */
+.gallery-grid{
+  max-width:1440px;margin:0 auto;padding:0 40px 120px;
+  columns:3;column-gap:14px;
+}
+.grid-item{
+  break-inside:avoid;margin-bottom:14px;border-radius:18px;overflow:hidden;
+  position:relative;cursor:pointer;
+  transition:all 0.55s var(--spring-bouncy);
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.2);
+}
+.grid-item::after{
+  content:'';position:absolute;inset:0;border-radius:18px;pointer-events:none;
+  /* Glass shimmer overlay */
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.04) 0%,transparent 50%),
+    linear-gradient(135deg,rgba(255,255,255,0.08) 0%,transparent 40%);
+  opacity:0;transition:opacity 0.5s var(--spring-soft);
+}
+.grid-item:hover{
+  transform:scale(1.025);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.05),
+    0 28px 80px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.08);
+}
+.grid-item:hover::after{opacity:1}
+.grid-item.hidden{display:none}
+.grid-item img{
+  width:100%;display:block;
+  transition:transform 0.7s var(--spring-soft);
+}
+.grid-item:hover img{transform:scale(1.06)}
+
+/* Glass tag capsule */
+.grid-item .overlay{
+  position:absolute;bottom:18px;left:16px;right:16px;
+  opacity:0;transform:translateY(10px);
+  transition:all 0.45s var(--spring-bouncy);
+  pointer-events:none;
+}
+.grid-item:hover .overlay{opacity:1;transform:translateY(0)}
+.overlay .tag{
+  display:inline-block;padding:7px 16px;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(30px) saturate(180%);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);
+  border:0.5px solid rgba(255,255,255,0.14);border-radius:980px;
+  font-size:10px;font-weight:720;letter-spacing:0.9px;
+  text-transform:uppercase;color:rgba(255,255,255,0.88);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* ===== Lightbox (Spring Glass) ===== */
+.lightbox{
+  display:flex;position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.92);
+  backdrop-filter:blur(80px) saturate(240%);
+  -webkit-backdrop-filter:blur(80px) saturate(240%);
+  align-items:center;justify-content:center;flex-direction:column;
+  cursor:zoom-out;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.35s var(--spring-soft);
+}
+.lightbox.open{opacity:1;pointer-events:auto}
+.lightbox-img{
+  max-width:90vw;max-height:80vh;object-fit:contain;border-radius:14px;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.04),0 40px 120px rgba(0,0,0,0.7);
+  transition:transform 0.45s var(--spring-bouncy);
+}
+.lightbox-img.zoom{transform:scale(0.9)}
+.lightbox.open .lightbox-img{transform:scale(1)}
+.lightbox-info{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);text-align:center}
+.lb-cat{
+  display:inline-block;padding:9px 22px;
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+  border:0.5px solid rgba(255,255,255,0.1);border-radius:980px;
+  font-size:11px;font-weight:720;letter-spacing:0.9px;
+  color:rgba(255,255,255,0.75);text-transform:uppercase;
+}
+.lightbox-close,.lightbox-nav{
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.4s var(--spring-bouncy);
+}
+.lightbox-close{
+  position:absolute;top:28px;right:28px;width:44px;height:44px;
+  background:rgba(255,255,255,0.06);border-radius:50%;
+  color:rgba(255,255,255,0.45);font-size:22px;
+}
+.lightbox-close:hover{
+  background:rgba(255,255,255,0.14);color:#fff;
+  transform:scale(1.08);
+  box-shadow:0 0 30px rgba(255,255,255,0.06);
+}
+.lightbox-nav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.45);font-size:18px;
+}
+.lightbox-nav:hover{
+  background:rgba(255,255,255,0.12);color:#fff;
+  transform:translateY(-50%) scale(1.12);
+}
+.lb-prev{left:28px}.lb-next{right:28px}
+
+/* Footer */
+.footer{padding:52px 40px 32px;text-align:center;font-size:12px;
+  color:rgba(255,255,255,0.28);border-top:0.5px solid rgba(255,255,255,0.05)}
+.footer a{color:rgba(255,255,255,0.36);margin:0 8px;
+  transition:color 0.3s var(--spring-soft)}
+.footer a:hover{color:rgba(255,255,255,0.55)}
+
+@media(max-width:900px){.gallery-grid{columns:2;padding:0 16px 80px;column-gap:10px}}
+@media(max-width:768px){
+  .nav{left:14px;transform:none;gap:14px;padding:0 16px}.nav-links,.nav-cta{display:none}
+  .hamburger{display:flex;order:-1}
+  .nav-logo{order:1}
+  .page-header{padding:140px 20px 24px}
+  .filter-bar{padding:8px 12px 32px;gap:6px}
+  .filter-btn{padding:8px 16px;font-size:11px}
+  .lightbox-nav{width:38px;height:38px;font-size:16px}
+  .lb-prev{left:14px}.lb-next{right:14px}
+  .lightbox-close{top:20px;right:20px;width:40px;height:40px}
+  .footer{padding:36px 20px 24px}
+}
+@media(max-width:480px){.gallery-grid{columns:1}}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo">Zhiqiang<span>.</span></a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="gallery.html" class="active">作品集</a>
+    <a href="about.html">关于我</a>
+    <a href="contact.html">联系</a>
+  </div>
+  <a href="contact.html" class="nav-cta">开始合作</a>
+  <button class="hamburger" id="hamburger" aria-label="菜单"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">首页</a>
+  <a href="gallery.html" class="active">作品集</a>
+  <a href="about.html">关于我</a>
+  <a href="contact.html">联系</a>
+  <a href="contact.html" style="color:var(--blue-soft)">开始合作</a>
+</div>
+
+<div class="page-header">
+  <h1>作品集</h1>
+  <span class="subtitle">97 张作品 &middot; 6 类题材</span>
+</div>
+
+<div class="filter-bar" id="filterBar">
+  <button class="filter-btn active" data-filter="all">全部</button>
+  <button class="filter-btn" data-filter="landscape">风光</button>
+  <button class="filter-btn" data-filter="architecture">建筑</button>
+  <button class="filter-btn" data-filter="humanity">人文</button>
+  <button class="filter-btn" data-filter="ecology">生态</button>
+  <button class="filter-btn" data-filter="night">夜景</button>
+  <button class="filter-btn" data-filter="portrait">人像</button>
+</div>
+
+<div class="gallery-grid" id="galleryGrid">
+<!-- Items injected by previous generator — keeping all 97 photos as-is -->
+<div class="grid-item" data-category="landscape" onclick="openLightbox(this)"><img src="images/风光/2023-07-27%20232136.jpg" alt="晨雾山谷" loading="lazy"><div class="overlay"><p class="tag">风光</p></div></div>
+<div class="grid-item" data-category="landscape" onclick="openLightbox(this)"><img src="images/风光/2024-05-04%20154850.jpg" alt="金色麦田" loading="lazy"><div class="overlay"><p class="tag">风光</p></div></div>
+<div class="grid-item" data-category="landscape" onclick="openLightbox(this)"><img src="images/风光/2025-10-21%20100419.jpg" alt="海岸黄昏" loading="lazy"><div class="overlay"><p class="tag">风光</p></div></div>
+<div class="grid-item" data-category="landscape" onclick="openLightbox(this)"><img src="images/风光/2025-10-27%20103416.jpg" alt="山川河流" loading="lazy"><div class="overlay"><p class="tag">风光</p></div></div>
+<div class="grid-item" data-category="landscape" onclick="openLightbox(this)"><img src="images/风光/2025-10-29%20213251.jpg" alt="日落金山" loading="lazy"><div class="overlay"><p class="tag">风光</p></div></div>
+<div class="grid-item" data-category="landscape" onclick="openLightbox(this)"><img src="images/风光/2025-10-31%20225855.jpg" alt="云雾缭绕" loading="lazy"><div class="overlay"><p class="tag">风光</p></div></div>
+
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2023-08-28%20055226.jpg" alt="现代美术馆" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2023-09-01%20175645.jpg" alt="曲线光影" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2023-09-15%20003114.jpg" alt="城市天际" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2023-10-15%20225336.jpg" alt="几何建筑" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2024-02-14%20002004.jpg" alt="桥上风景" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2024-06-03%20122344.jpg" alt="钢铁森林" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2024-06-19%20000938.jpg" alt="天际线" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2024-07-19%20224138.jpg" alt="对称美学" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2024-07-19%20224202.jpg" alt="光影建筑" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2024-07-19%20234705.jpg" alt="廊桥" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2024-08-02%20185908.jpg" alt="都市黄昏" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2024-08-02%20191227.jpg" alt="高楼远眺" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-01-06%20181043.jpg" alt="玻璃幕墙" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-01-21%20200857.jpg" alt="建筑细节" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-01-29%20115611.jpg" alt="广场" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-01-29%20175719.jpg" alt="光影交错" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-01-29%20175729.jpg" alt="街角建筑" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-06-15%20184312.jpg" alt="结构之美" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-06-19%20191239.jpg" alt="城市中轴线" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-07-07%20210558.jpg" alt="历史与现代" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-08-14%20164942.jpg" alt="城市建筑" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-10-01%20190621.jpg" alt="城市建筑" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+<div class="grid-item" data-category="architecture" onclick="openLightbox(this)"><img src="images/城市建筑/2025-12-26%20213039.jpg" alt="城市建筑" loading="lazy"><div class="overlay"><p class="tag">城市建筑</p></div></div>
+
+<div class="grid-item" data-category="humanity" onclick="openLightbox(this)"><img src="images/人文纪实/2022-09-29%20143426.jpg" alt="市井烟火" loading="lazy"><div class="overlay"><p class="tag">人文纪实</p></div></div>
+<div class="grid-item" data-category="humanity" onclick="openLightbox(this)"><img src="images/人文纪实/2023-01-14%20143415.jpg" alt="老街匠人" loading="lazy"><div class="overlay"><p class="tag">人文纪实</p></div></div>
+<div class="grid-item" data-category="humanity" onclick="openLightbox(this)"><img src="images/人文纪实/2023-01-31%20233416.jpg" alt="节日庆典" loading="lazy"><div class="overlay"><p class="tag">人文纪实</p></div></div>
+<div class="grid-item" data-category="humanity" onclick="openLightbox(this)"><img src="images/人文纪实/2023-02-01%20235313.jpg" alt="归途" loading="lazy"><div class="overlay"><p class="tag">人文纪实</p></div></div>
+<div class="grid-item" data-category="humanity" onclick="openLightbox(this)"><img src="images/人文纪实/2023-08-29%20172211.jpg" alt="童年游戏" loading="lazy"><div class="overlay"><p class="tag">人文纪实</p></div></div>
+<div class="grid-item" data-category="humanity" onclick="openLightbox(this)"><img src="images/人文纪实/2023-11-14%20135422.jpg" alt="清晨集市" loading="lazy"><div class="overlay"><p class="tag">人文纪实</p></div></div>
+<div class="grid-item" data-category="humanity" onclick="openLightbox(this)"><img src="images/人文纪实/2025-12-08%20093215.jpg" alt="街头棋局" loading="lazy"><div class="overlay"><p class="tag">人文纪实</p></div></div>
+<div class="grid-item" data-category="humanity" onclick="openLightbox(this)"><img src="images/人文纪实/2026-02-20%20090142.jpg" alt="早餐摊" loading="lazy"><div class="overlay"><p class="tag">人文纪实</p></div></div>
+<div class="grid-item" data-category="humanity" onclick="openLightbox(this)"><img src="images/人文纪实/2026-03-03%20192923.jpg" alt="放学路上" loading="lazy"><div class="overlay"><p class="tag">人文纪实</p></div></div>
+
+<div class="grid-item" data-category="ecology" onclick="openLightbox(this)"><img src="images/自然生态/2023-03-30%20154827.jpg" alt="林间精灵" loading="lazy"><div class="overlay"><p class="tag">自然生态</p></div></div>
+<div class="grid-item" data-category="ecology" onclick="openLightbox(this)"><img src="images/自然生态/2023-03-30%20154828.jpg" alt="湿地晨光" loading="lazy"><div class="overlay"><p class="tag">自然生态</p></div></div>
+<div class="grid-item" data-category="ecology" onclick="openLightbox(this)"><img src="images/自然生态/2024-02-20%20173046.jpg" alt="花间蝴蝶" loading="lazy"><div class="overlay"><p class="tag">自然生态</p></div></div>
+<div class="grid-item" data-category="ecology" onclick="openLightbox(this)"><img src="images/自然生态/2024-06-25%20210623.jpg" alt="山间溪流" loading="lazy"><div class="overlay"><p class="tag">自然生态</p></div></div>
+<div class="grid-item" data-category="ecology" onclick="openLightbox(this)"><img src="images/自然生态/2026-03-15%20180002.jpg" alt="飞鸟盘旋" loading="lazy"><div class="overlay"><p class="tag">自然生态</p></div></div>
+<div class="grid-item" data-category="ecology" onclick="openLightbox(this)"><img src="images/自然生态/2026-03-20%20163307(1).jpg" alt="苔藓微距" loading="lazy"><div class="overlay"><p class="tag">自然生态</p></div></div>
+<div class="grid-item" data-category="ecology" onclick="openLightbox(this)"><img src="images/自然生态/2026-03-20%20163307(3).jpg" alt="林间晨雾" loading="lazy"><div class="overlay"><p class="tag">自然生态</p></div></div>
+<div class="grid-item" data-category="ecology" onclick="openLightbox(this)"><img src="images/自然生态/2026-03-20%20163307.jpg" alt="湖面倒影" loading="lazy"><div class="overlay"><p class="tag">自然生态</p></div></div>
+<div class="grid-item" data-category="ecology" onclick="openLightbox(this)"><img src="images/自然生态/2026-03-20%20163311(1).jpg" alt="叶上露珠" loading="lazy"><div class="overlay"><p class="tag">自然生态</p></div></div>
+<div class="grid-item" data-category="ecology" onclick="openLightbox(this)"><img src="images/自然生态/2026-03-20%20163311.jpg" alt="秋日落叶" loading="lazy"><div class="overlay"><p class="tag">自然生态</p></div></div>
+
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2023-02-05%20200339.jpg" alt="霓虹都市" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2023-02-05%20201310.jpg" alt="银河之下" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2023-03-08%20190529.jpg" alt="灯火码头" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2023-05-22%20200137.jpg" alt="车流光轨" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2024-06-19%20001003.jpg" alt="月下古楼" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2024-08-01%20200742.jpg" alt="不夜城" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2024-08-02%20203007.jpg" alt="江边夜色" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2025-07-10%20233008.jpg" alt="城市脉搏" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2025-07-10%20233018.jpg" alt="守望夜色" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2025-07-24%20200526.jpg" alt="霓虹街头" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2025-12-11%20235515.jpg" alt="夜桥" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2025-12-11%20235516.jpg" alt="午夜食堂" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2026-02-14%20203511.jpg" alt="星空露营" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2026-03-11%20202331.jpg" alt="月光洒落" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2026-03-11%20202734.jpg" alt="夜行长廊" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+<div class="grid-item" data-category="night" onclick="openLightbox(this)"><img src="images/夜景/2026-03-12%20180624.jpg" alt="夜景" loading="lazy"><div class="overlay"><p class="tag">夜景</p></div></div>
+
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/04accfc2269ba0448578171f15ad37d4.jpg" alt="自然光肖像" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/0ee063992559dd686abc430a41078ab2.jpg" alt="光影交错" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/190468e91031759fbedfe29b6b25b061.jpg" alt="微笑瞬间" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/19f7c5a1579290f2e2af8c934cae8624.jpg" alt="侧颜" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/208f315aa9b9e058725a863951d53b7f.jpg" alt="回眸" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/23489ded670e0e1d298c85bc62068544.jpg" alt="剪影" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/33ed835437474bec4f0dedc771a65b72.jpg" alt="沉思" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/3ed633b4a339c69a3609dec2f16c8d9c.jpg" alt="仰望" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/49a6ea41428f996adfb5df74c634f347.jpg" alt="逆光" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/4a0b1bf050ba655b1f5169f8fce2cee9.jpg" alt="对望" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/4aa199dca39356c4f15e82dcd6ee10ed.jpg" alt="安静" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/55244d369546c229145b348d4b3dbffc.jpg" alt="专注" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/68fc0eae6e3820476b5e5e7eea0185c1.jpg" alt="街拍人像" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/8730bb6af8c526086a6755a43756692a.jpg" alt="背影" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/9128e8bbf81921e2910626d544e2c9c6.jpg" alt="眼神光" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/96c00e60d56da6e8f4431f72363cca29.jpg" alt="午后阳光" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/9a4c324a85f40bb30d1680023dcca65a.jpg" alt="窗边人像" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/9f9a6c2384879f710bc4c6e6739cd4e8.jpg" alt="逆光剪影" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/IMG_2181.jpg" alt="牵手" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/IMG_5422.jpg" alt="奔跑" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/IMG_5423.jpg" alt="坐姿肖像" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/IMG_6329.jpg" alt="站立肖像" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/IMG_6373.jpg" alt="微笑" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/IMG_7742.jpg" alt="严肃" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/_40A0327.jpg" alt="对视" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/_40A1491.jpg" alt="局部特写" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/a6d5338649125ae0c5ad995893d63a32.jpg" alt="环境人像" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/b067303d1d38384debaef0cf78d9b0b4.jpg" alt="情绪瞬间" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/cbc5d82a248afaa15033cfb15f724e3c.jpg" alt="笑容" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/e228a9207b8d6e93d179791e177dddfb.jpg" alt="安静侧脸" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/e834cce778876e25b3eabaf01fb3dee1.jpg" alt="光影人像" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/edfc8f367cf038a4c8f1b886cc4bfda9.jpg" alt="抓拍瞬间" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+<div class="grid-item" data-category="portrait" onclick="openLightbox(this)"><img src="images/人像/ff84e3c1ec2fe677033df6dc0e9e4528.jpg" alt="自然表情" loading="lazy"><div class="overlay"><p class="tag">人像</p></div></div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <button class="lightbox-nav lb-prev" onclick="navLightbox(-1)">&#10094;</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <button class="lightbox-nav lb-next" onclick="navLightbox(1)">&#10095;</button>
+  <div class="lightbox-info"><p class="lb-cat" id="lbCat"></p></div>
+</div>
+
+<div class="footer">
+  <p>&copy; 2026 陈志强. All rights reserved.</p>
+</div>
+
+<script>
+/* Scroll Progress */
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('scrollProgress').style.width=h>0?(scrollY/h*100)+'%':'0%';
+  document.getElementById('nav').classList.toggle('docked',scrollY>20);
+});
+
+/* Mobile Menu Spring */
+(function(){
+  const menu=document.getElementById('mobileMenu');
+  const btn=document.getElementById('hamburger');
+  let open=false;
+  btn.onclick=()=>{
+    open=!open;
+    menu.classList.toggle('reveal',open);
+    document.body.style.overflow=open?'hidden':'';
+    const spans=btn.children;
+    if(open){
+      spans[0].style.transform='rotate(45deg) translate(4px,4px)';
+      spans[1].style.opacity='0';
+      spans[2].style.transform='rotate(-45deg) translate(4px,-4px)';
+    }else{
+      spans[0].style.transform='';spans[1].style.opacity='';spans[2].style.transform='';
+    }
+  };
+  menu.querySelectorAll('a').forEach(a=>a.onclick=()=>{
+    open=false;menu.classList.remove('reveal');
+    document.body.style.overflow='';
+    const spans=btn.children;
+    spans[0].style.transform='';spans[1].style.opacity='';spans[2].style.transform='';
+  });
+})();
+
+/* Dynamic Light on Filter Pills */
+document.querySelectorAll('.filter-btn').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    el.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+  });
+  el.addEventListener('mouseleave',()=>{
+    el.style.setProperty('--mx','50%');el.style.setProperty('--my','50%');
+  });
+});
+
+/* Filter Logic */
+const filterBtns=document.querySelectorAll('.filter-btn');
+const gridItems=document.querySelectorAll('.grid-item');
+let currentFilter='all';
+
+function applyFilter(cat){
+  currentFilter=cat;
+  filterBtns.forEach(b=>b.classList.toggle('active',b.dataset.filter===cat));
+  gridItems.forEach(item=>{
+    const match=cat==='all'||item.dataset.category===cat;
+    if(match){item.classList.remove('hidden')}else{item.classList.add('hidden')}
+  });
+}
+
+filterBtns.forEach(btn=>{
+  btn.addEventListener('click',()=>applyFilter(btn.dataset.filter));
+});
+
+/* Handle URL hash for cross-page category links (e.g. gallery.html#landscape) */
+(function handleHash(){
+  const map={
+    landscape:'landscape', architecture:'architecture', humanity:'humanity',
+    ecology:'ecology', night:'night', portrait:'portrait'
+  };
+  const hash=window.location.hash.replace('#','');
+  if(hash && map[hash]){
+    /* Small delay so masonry layout settles before we filter */
+    setTimeout(()=>applyFilter(map[hash]),80);
+    /* Prevent browser from trying to scroll to non-existent anchor */
+    if('scrollRestoration' in history) history.scrollRestoration='manual';
+  }
+  /* Re-trigger on hashchange for in-page navigation */
+  window.addEventListener('hashchange',()=>{
+    const h=window.location.hash.replace('#','');
+    if(h && map[h]) applyFilter(map[h]);
+    else applyFilter('all');
+  });
+})();
+
+/* Lightbox */
+let lbIndex=0;
+function getVisible(){return Array.from(gridItems).filter(i=>!i.classList.contains('hidden'))}
+function openLightbox(el){
+  const v=getVisible();lbIndex=v.indexOf(el);
+  updateLightbox(v);
+  const lb=document.getElementById('lightbox');
+  lb.classList.add('open');
+  document.body.style.overflow='hidden';
+  /* Spring entrance */
+  const img=document.getElementById('lightboxImg');
+  img.classList.add('zoom');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>img.classList.remove('zoom')));
+}
+function updateLightbox(v){
+  if(!v.length)return;
+  const item=v[lbIndex];
+  document.getElementById('lightboxImg').src=item.querySelector('img').src;
+  document.getElementById('lbCat').textContent=item.querySelector('.tag')?.textContent||'';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+}
+function navLightbox(dir){
+  const v=getVisible();
+  lbIndex=(lbIndex+dir+v.length)%v.length;
+  const img=document.getElementById('lightboxImg');
+  img.classList.add('zoom');
+  updateLightbox(v);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>img.classList.remove('zoom')));
+}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lightbox').classList.contains('open'))return;
+  if(e.key==='Escape')closeLightbox();
+  if(e.key==='ArrowLeft')navLightbox(-1);
+  if(e.key==='ArrowRight')navLightbox(1);
+});
+document.getElementById('lightbox').addEventListener('click',e=>{
+  if(e.target===e.currentTarget)closeLightbox();
+});
+
+/* Staggered masonry reveal */
+const masonryObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.opacity='1';
+      e.target.style.transform='translateY(0)';
+      masonryObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.1,rootMargin:'0px 0px -30px 0px'});
+gridItems.forEach((item,i)=>{
+  item.style.opacity='0';
+  item.style.transform='translateY(30px)';
+  item.style.transition=`all 0.65s var(--spring-soft) ${i*0.02}s`;
+  masonryObs.observe(item);
+});
+</script>
+</body>
+</html>

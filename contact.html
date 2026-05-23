@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>联系 — 陈志强</title>
+<style>
+:root{
+  --spring-soft:cubic-bezier(0.22,0.61,0.36,1);
+  --spring-bouncy:cubic-bezier(0.34,1.56,0.64,1);
+  --spring-smooth:cubic-bezier(0.25,0.46,0.45,0.94);
+  --blue:#0071e3;--blue-soft:#0A84FF;
+  --text:#1d1d1f;--text-secondary:#86868b;--text-tertiary:#aeaeb2;
+  --bg:#fbfbfd;--glass-bg:rgba(255,255,255,0.68);
+  --glass-border:rgba(0,0,0,0.06);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;
+  background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+.scroll-progress{position:fixed;top:0;left:0;height:2px;z-index:200;background:linear-gradient(90deg,var(--blue),var(--blue-soft));border-radius:0 1px 1px 0}
+
+/* Navigation */
+.nav{
+  position:fixed;top:16px;left:20px;z-index:100;
+  height:46px;display:flex;align-items:center;gap:28px;padding:0 24px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.1) 0%,rgba(255,255,255,0.0) 35%,rgba(255,255,255,0.04) 100%),
+    linear-gradient(105deg,rgba(255,255,255,0.18) 0%,transparent 35%),
+    rgba(255,255,255,0.25);
+  backdrop-filter:blur(56px) saturate(200%);-webkit-backdrop-filter:blur(56px) saturate(200%);
+  border:0.5px solid rgba(120,120,128,0.08);border-radius:23px;
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.35),
+    inset 0 -0.5px 0 rgba(0,0,0,0.02),
+    0 2px 12px rgba(0,0,0,0.03);
+  transition:all 0.6s var(--spring-soft);
+}
+.nav.docked{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.0) 35%,rgba(255,255,255,0.06) 100%),
+    linear-gradient(105deg,rgba(255,255,255,0.24) 0%,transparent 35%),
+    rgba(255,255,255,0.4);
+  backdrop-filter:blur(70px) saturate(220%);-webkit-backdrop-filter:blur(70px) saturate(220%);
+  border-color:rgba(120,120,128,0.04);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.3),
+    inset 0 -0.5px 0 rgba(0,0,0,0.02),
+    0 8px 32px rgba(0,0,0,0.06);
+}
+.nav-logo{font-size:14px;font-weight:700;letter-spacing:-0.4px;white-space:nowrap}
+.nav-logo span{background:linear-gradient(135deg,var(--blue-soft),#5E5CE6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:24px}
+.nav-links a{
+  font-size:13px;font-weight:450;color:rgba(0,0,0,0.52);padding:6px 2px;position:relative;
+  transition:color 0.35s var(--spring-soft);
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%) scaleX(0);
+  width:70%;height:1.5px;background:var(--blue-soft);border-radius:1px;
+  transition:transform 0.4s var(--spring-bouncy);
+}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-links a:hover::after,.nav-links a.active::after{transform:translateX(-50%) scaleX(1)}
+.nav-cta{
+  font-size:12px;font-weight:620;white-space:nowrap;padding:7px 17px;
+  background:rgba(0,113,227,0.1);
+  border:0.6px solid rgba(0,113,227,0.15);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-radius:980px;color:var(--blue-soft);
+  box-shadow:inset 0 0.5px 0 rgba(255,255,255,0.2);
+  transition:all 0.4s var(--spring-bouncy);cursor:pointer;
+}
+.nav-cta:hover{background:rgba(0,113,227,0.16);border-color:rgba(0,113,227,0.28);box-shadow:inset 0 0.5px 0 rgba(255,255,255,0.25),0 0 0 4px rgba(0,113,227,0.04);transform:scale(1.04);color:var(--blue)}
+.nav-cta:active{transform:scale(0.96)}
+
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;background:none;border:none;padding:6px}
+.hamburger span{display:block;width:17px;height:1.5px;background:var(--text);border-radius:1px;transition:all 0.4s var(--spring-bouncy)}
+.mobile-menu{
+  display:flex;position:fixed;inset:0;z-index:99;
+  background:rgba(251,251,253,0.86);backdrop-filter:blur(70px) saturate(240%);
+  -webkit-backdrop-filter:blur(70px) saturate(240%);
+  flex-direction:column;padding:100px 36px 36px;gap:28px;
+  opacity:0;pointer-events:none;transition:opacity 0.35s var(--spring-soft);
+}
+.mobile-menu.reveal{opacity:1;pointer-events:auto}
+.mobile-menu a{font-size:26px;font-weight:680;color:rgba(0,0,0,0.38);transition:all 0.35s var(--spring-bouncy);letter-spacing:-0.5px}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--text);transform:translateX(6px)}
+
+/* Page Header */
+.page-header{padding:150px max(40px,8vw) 48px;text-align:center;position:relative;overflow:hidden}
+.page-header::before{
+  content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(0,113,227,0.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+.page-tag{font-size:13px;font-weight:540;color:var(--text-secondary);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:14px;
+  opacity:0;transform:translateY(18px);animation:springUp 0.8s var(--spring-soft) 0.05s forwards}
+.page-header h1{font-size:clamp(40px,6vw,66px);font-weight:730;letter-spacing:-2px;line-height:1.07;
+  opacity:0;transform:translateY(22px);animation:springUp 0.85s var(--spring-soft) 0.12s forwards}
+@keyframes springUp{
+  0%{opacity:0;transform:translateY(22px)}
+  60%{opacity:1;transform:translateY(-4px)}
+  80%{transform:translateY(1px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+.reveal{opacity:0;transform:translateY(40px);transition:all 0.9s var(--spring-soft)}
+.reveal.active{opacity:1;transform:translateY(0)}
+
+/* Contact Layout */
+.contact-wrapper{
+  max-width:980px;margin:0 auto;padding:0 max(40px,8vw) 100px;
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;
+}
+
+/* Form */
+.form-area h2{font-size:22px;font-weight:660;letter-spacing:-0.3px;margin-bottom:10px}
+.form-area>p{font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:30px}
+.form-group{margin-bottom:22px}
+.form-group label{display:block;font-size:13px;font-weight:540;color:#424245;margin-bottom:7px}
+.form-group input,.form-group textarea{
+  width:100%;padding:13px 18px;font-size:15px;font-family:inherit;
+  border:1px solid #d2d2d7;border-radius:14px;
+  background:white;color:var(--text);outline:none;
+  transition:all 0.35s var(--spring-bouncy);
+  resize:vertical;
+}
+.form-group input:focus,.form-group textarea:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 4px rgba(0,113,227,0.08),0 2px 8px rgba(0,0,0,0.04);
+  transform:scale(1.01);
+}
+.form-group textarea{min-height:130px}
+.form-submit{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 34px;
+  background:linear-gradient(135deg,rgba(10,132,255,0.85),rgba(0,113,227,0.9));color:white;
+  font-size:14px;font-weight:540;font-family:inherit;border:none;
+  border-radius:980px;cursor:pointer;
+  border:0.5px solid rgba(255,255,255,0.2);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:inset 0 0.5px 0 rgba(255,255,255,0.25),0 2px 14px rgba(0,113,227,0.15);
+  transition:all 0.4s var(--spring-bouncy);
+}
+.form-submit:hover{transform:scale(1.05);background:linear-gradient(135deg,rgba(10,132,255,0.92),rgba(0,113,227,0.95));box-shadow:inset 0 0.5px 0 rgba(255,255,255,0.3),0 6px 26px rgba(0,113,227,0.22)}
+.form-submit:active{transform:scale(0.95)}
+.form-status{margin-top:14px;font-size:14px;color:var(--blue);display:none;
+  opacity:0;transform:translateY(6px);
+  transition:all 0.4s var(--spring-bouncy)}
+.form-status.show{display:block;opacity:1;transform:translateY(0)}
+
+/* Info Cards */
+.info-card{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.08) 0%,rgba(255,255,255,0.0) 40%,rgba(255,255,255,0.03) 100%),
+    rgba(255,255,255,0.32);
+  backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
+  border-radius:22px;padding:34px;margin-bottom:18px;
+  border:0.5px solid var(--glass-border);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.3),
+    0 1px 4px rgba(0,0,0,0.02);
+  transition:all 0.5s var(--spring-bouncy);
+  position:relative;overflow:hidden;
+}
+.info-card::before{
+  content:'';position:absolute;inset:0;border-radius:22px;
+  background:radial-gradient(ellipse 120% 80% at var(--mx,50%) var(--my,50%),rgba(255,255,255,0.12) 0%,transparent 60%);
+  opacity:0;transition:opacity 0.6s;pointer-events:none;
+}
+.info-card:hover{transform:translateY(-3px);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.12) 0%,rgba(255,255,255,0.0) 35%,rgba(255,255,255,0.05) 100%),
+    rgba(255,255,255,0.5);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.35),
+    0 12px 40px rgba(0,0,0,0.04);
+}
+.info-card:hover::before{opacity:1}
+.info-card h3{font-size:15px;font-weight:640;margin-bottom:18px}
+.info-row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.info-row:last-child{margin-bottom:0}
+.info-icon{
+  width:38px;height:38px;border-radius:11px;
+  background:rgba(0,113,227,0.06);display:flex;align-items:center;justify-content:center;
+  font-size:17px;flex-shrink:0;
+}
+.info-label{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.3px}
+.info-value{font-size:14px;font-weight:540;color:var(--text)}
+
+/* Social Links */
+.social-links{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+.social-link{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  height:46px;padding:0 18px;border-radius:14px;
+  font-size:13px;font-weight:540;color:white;border:none;cursor:pointer;
+  transition:all 0.4s var(--spring-bouncy);text-decoration:none;
+}
+.social-link:hover{transform:translateY(-2px) scale(1.04)}
+.social-link:active{transform:scale(0.95)}
+.social-wechat{background:#07C160}
+.social-xiaohongshu{background:#FE2C55}
+.social-github{background:#24292e}
+
+/* Footer */
+.footer{background:#1d1d1f;color:#a1a1a6;padding:52px max(40px,8vw) 36px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;padding-bottom:36px;border-bottom:0.5px solid #333}
+.footer h4{color:#f5f5f7;font-size:13px;font-weight:620;margin-bottom:14px}
+.footer a{display:block;font-size:13px;color:#a1a1a6;margin-bottom:9px;transition:color 0.25s var(--spring-soft)}
+.footer a:hover{color:#f5f5f7}
+.footer-brand{font-size:20px;font-weight:700;color:#f5f5f7;margin-bottom:10px}
+.footer-brand span{color:var(--blue-soft)}
+.footer p{font-size:13px;line-height:1.6;margin-bottom:18px;color:#a1a1a6}
+.footer-bottom{padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-tertiary)}
+
+@media(max-width:768px){
+  .nav{left:14px;transform:none;gap:14px;padding:0 18px}
+  .nav-links,.nav-cta{display:none}.hamburger{display:flex;order:-1}
+  .nav-logo{order:1}
+  .page-header{padding:130px 28px 36px}
+  .contact-wrapper{grid-template-columns:1fr;padding:0 28px 80px;gap:44px}
+  .footer{padding:44px 28px 28px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo">Zhiqiang<span>.</span></a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="gallery.html">作品集</a>
+    <a href="about.html">关于我</a>
+    <a href="contact.html" class="active">联系</a>
+  </div>
+  <a href="contact.html" class="nav-cta">开始合作</a>
+  <button class="hamburger" id="hamburger" aria-label="菜单"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">首页</a>
+  <a href="gallery.html">作品集</a>
+  <a href="about.html">关于我</a>
+  <a href="contact.html" class="active">联系</a>
+  <a href="contact.html" style="color:var(--blue-soft)">开始合作</a>
+</div>
+
+<section class="page-header">
+  <p class="page-tag">联系</p>
+  <h1>期待与你<br>一起创作。</h1>
+</section>
+
+<div class="contact-wrapper reveal">
+
+  <div class="form-area">
+    <h2>发个消息</h2>
+    <p>不管是合作咨询、约拍，还是单纯聊聊摄影，我都期待收到你的消息。</p>
+    <form id="contactForm" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label for="name">姓名</label>
+        <input type="text" id="name" name="name" placeholder="你的名字" required>
+      </div>
+      <div class="form-group">
+        <label for="email">邮箱</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label for="message">消息</label>
+        <textarea id="message" name="message" placeholder="你想说什么……" required></textarea>
+      </div>
+      <button type="submit" class="form-submit">发送消息 →</button>
+      <p class="form-status" id="formStatus"></p>
+    </form>
+  </div>
+
+  <div class="info-sidebar">
+    <div class="info-card">
+      <h3>联系方式</h3>
+      <div class="info-row">
+        <div class="info-icon">&#x1F4F1;</div>
+        <div><p class="info-label">手机</p><p class="info-value">18066953609</p></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">&#x1F4E7;</div>
+        <div><p class="info-label">邮箱</p><p class="info-value">1740188970@qq.com</p></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">&#x1F4CD;</div>
+        <div><p class="info-label">常驻城市</p><p class="info-value">上海</p></div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>社交媒体</h3>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px">通过以下平台也能找到我</p>
+      <div class="social-links">
+        <a class="social-link social-wechat" onclick="event.preventDefault();alert('微信号请直接添加微信联系')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.4 0 0 4.6 0 10.2c0 2.1 1.1 4 2.8 5.2L2 20l4.8-2.5c2.6.7 5.4.7 5.2 0C17.8 17.5 24 12.6 24 10.2 24 4.6 18.6 0 12 0zM8.5 8a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm7 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/></svg>
+          微信
+        </a>
+        <a href="https://github.com/QiangziiiiI" class="social-link social-github" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 .3C5.4.3 0 5.7 0 12.3c0 5.3 3.4 9.8 8.2 11.4.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.5 3.3-1.2 3.3-1.2.7 1.6.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6C20.6 22.1 24 17.6 24 12.3 24 5.7 18.6.3 12 .3z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>合作类型</h3>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.8">
+        航拍摄影 / 风光摄影 / 婚礼跟拍<br>
+        短视频制作 / 新媒体运营 / 影像评测
+      </p>
+    </div>
+  </div>
+</div>
+
+<footer class="footer reveal">
+  <div class="footer-grid">
+    <div><div class="footer-brand">Zhiqiang<span>.</span></div><p>戏剧影视文学专业背景的航拍摄影师与影视创作者，致力于用镜头讲述动人的视觉故事。</p></div>
+    <div><h4>导航</h4><a href="index.html">首页</a><a href="gallery.html">作品集</a><a href="about.html">关于我</a><a href="contact.html">联系</a></div>
+    <div><h4>联系</h4><a href="mailto:1740188970@qq.com">邮箱联系</a><a href="contact.html">留言表单</a></div>
+    <div><h4>作品</h4><a href="gallery.html#landscape">风光</a><a href="gallery.html#architecture">建筑</a><a href="gallery.html#portrait">人像</a></div>
+  </div>
+  <div class="footer-bottom"><span>&copy; 2026 陈志强. All rights reserved.</span><span>用 &#x2665; 和 HTML 制作</span></div>
+</footer>
+
+<script>
+/* Scroll Progress */
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('scrollProgress').style.width=h>0?(scrollY/h*100)+'%':'0%';
+  document.getElementById('nav').classList.toggle('docked',scrollY>20);
+});
+
+/* Mobile Menu */
+(function(){
+  const menu=document.getElementById('mobileMenu'),btn=document.getElementById('hamburger');
+  let open=false;
+  btn.onclick=()=>{
+    open=!open;menu.classList.toggle('reveal',open);
+    document.body.style.overflow=open?'hidden':'';
+    const s=btn.children;
+    if(open){s[0].style.transform='rotate(45deg) translate(4px,4px)';s[1].style.opacity='0';s[2].style.transform='rotate(-45deg) translate(4px,-4px)'}
+    else{s[0].style.transform='';s[1].style.opacity='';s[2].style.transform=''}
+  };
+  menu.querySelectorAll('a').forEach(a=>a.onclick=()=>{
+    open=false;menu.classList.remove('reveal');document.body.style.overflow='';
+    const s=btn.children;s[0].style.transform='';s[1].style.opacity='';s[2].style.transform=''
+  });
+})();
+
+/* Dynamic Glass on Info Cards */
+document.querySelectorAll('.info-card').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    el.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+  });
+  el.addEventListener('mouseleave',()=>{el.style.setProperty('--mx','50%');el.style.setProperty('--my','50%')});
+});
+
+/* Form Submit with Spring Feedback */
+function handleSubmit(e){
+  e.preventDefault();
+  const name=document.getElementById('name').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const message=document.getElementById('message').value.trim();
+  const body=`姓名：${name}%0D%0A邮箱：${email}%0D%0A%0D%0A消息：%0D%0A${encodeURIComponent(message)}`;
+  window.location.href=`mailto:1740188970@qq.com?subject=作品集网站留言&body=${body}`;
+
+  const status=document.getElementById('formStatus');
+  status.textContent='感谢你的留言！邮件客户端已打开，请发送邮件完成联系。';
+  status.style.color='#34c759';
+  status.classList.add('show');
+  document.getElementById('contactForm').reset();
+  setTimeout(()=>status.classList.remove('show'),6000);
+}
+
+/* Scroll Reveal */
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('active');obs.unobserve(e.target)}})},{threshold:0.15,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
