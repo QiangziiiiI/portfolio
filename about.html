@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于我 — 陈志强</title>
+<style>
+:root{
+  --spring-soft:cubic-bezier(0.22,0.61,0.36,1);
+  --spring-bouncy:cubic-bezier(0.34,1.56,0.64,1);
+  --spring-smooth:cubic-bezier(0.25,0.46,0.45,0.94);
+  --blue:#0071e3;--blue-soft:#0A84FF;
+  --text:#1d1d1f;--text-secondary:#86868b;--text-tertiary:#aeaeb2;
+  --bg:#fbfbfd;--glass-bg:rgba(255,255,255,0.68);
+  --glass-border:rgba(0,0,0,0.06);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;
+  background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+.scroll-progress{position:fixed;top:0;left:0;height:2px;z-index:200;background:linear-gradient(90deg,var(--blue),var(--blue-soft));border-radius:0 1px 1px 0}
+
+/* Navigation */
+.nav{
+  position:fixed;top:16px;left:20px;z-index:100;
+  height:46px;display:flex;align-items:center;gap:28px;padding:0 24px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.1) 0%,rgba(255,255,255,0.0) 35%,rgba(255,255,255,0.04) 100%),
+    linear-gradient(105deg,rgba(255,255,255,0.18) 0%,transparent 35%),
+    rgba(255,255,255,0.25);
+  backdrop-filter:blur(56px) saturate(200%);
+  -webkit-backdrop-filter:blur(56px) saturate(200%);
+  border:0.5px solid rgba(120,120,128,0.08);border-radius:23px;
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.35),
+    inset 0 -0.5px 0 rgba(0,0,0,0.02),
+    0 2px 12px rgba(0,0,0,0.03);
+  transition:all 0.6s var(--spring-soft);
+}
+.nav.docked{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.0) 35%,rgba(255,255,255,0.06) 100%),
+    linear-gradient(105deg,rgba(255,255,255,0.24) 0%,transparent 35%),
+    rgba(255,255,255,0.4);
+  backdrop-filter:blur(70px) saturate(220%);-webkit-backdrop-filter:blur(70px) saturate(220%);
+  border-color:rgba(120,120,128,0.04);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.3),
+    inset 0 -0.5px 0 rgba(0,0,0,0.02),
+    0 8px 32px rgba(0,0,0,0.06);
+}
+.nav-logo{font-size:14px;font-weight:700;letter-spacing:-0.4px;white-space:nowrap}
+.nav-logo span{background:linear-gradient(135deg,var(--blue-soft),#5E5CE6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:24px}
+.nav-links a{
+  font-size:13px;font-weight:450;color:rgba(0,0,0,0.52);padding:6px 2px;position:relative;
+  transition:color 0.35s var(--spring-soft);
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%) scaleX(0);
+  width:70%;height:1.5px;background:var(--blue-soft);border-radius:1px;
+  transition:transform 0.4s var(--spring-bouncy);
+}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-links a:hover::after,.nav-links a.active::after{transform:translateX(-50%) scaleX(1)}
+.nav-cta{
+  font-size:12px;font-weight:620;white-space:nowrap;padding:7px 17px;
+  background:rgba(0,113,227,0.1);
+  border:0.6px solid rgba(0,113,227,0.15);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-radius:980px;color:var(--blue-soft);
+  box-shadow:inset 0 0.5px 0 rgba(255,255,255,0.2);
+  transition:all 0.4s var(--spring-bouncy);cursor:pointer;
+}
+.nav-cta:hover{background:rgba(0,113,227,0.16);border-color:rgba(0,113,227,0.28);box-shadow:inset 0 0.5px 0 rgba(255,255,255,0.25),0 0 0 4px rgba(0,113,227,0.04);transform:scale(1.04);color:var(--blue)}
+.nav-cta:active{transform:scale(0.96)}
+
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;background:none;border:none;padding:6px}
+.hamburger span{display:block;width:17px;height:1.5px;background:var(--text);border-radius:1px;transition:all 0.4s var(--spring-bouncy)}
+.mobile-menu{
+  display:flex;position:fixed;inset:0;z-index:99;
+  background:rgba(251,251,253,0.86);backdrop-filter:blur(70px) saturate(240%);
+  -webkit-backdrop-filter:blur(70px) saturate(240%);
+  flex-direction:column;padding:100px 36px 36px;gap:28px;
+  opacity:0;pointer-events:none;transition:opacity 0.35s var(--spring-soft);
+}
+.mobile-menu.reveal{opacity:1;pointer-events:auto}
+.mobile-menu a{font-size:26px;font-weight:680;color:rgba(0,0,0,0.38);transition:all 0.35s var(--spring-bouncy);letter-spacing:-0.5px}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--text);transform:translateX(6px)}
+
+/* Page Hero */
+.page-hero{padding:150px max(40px,8vw) 60px;position:relative;overflow:hidden}
+.page-hero::before{
+  content:'';position:absolute;top:-30%;left:-10%;width:50%;height:140%;
+  background:radial-gradient(ellipse at center,rgba(0,113,227,0.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+.page-tag{font-size:13px;font-weight:540;color:var(--text-secondary);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:14px;
+  opacity:0;transform:translateY(18px);animation:springUp 0.8s var(--spring-soft) 0.05s forwards}
+.page-hero h1{font-size:clamp(40px,6vw,66px);font-weight:730;letter-spacing:-2px;line-height:1.07;max-width:720px;
+  opacity:0;transform:translateY(22px);animation:springUp 0.85s var(--spring-soft) 0.12s forwards}
+.page-hero h1 span{color:var(--blue)}
+@keyframes springUp{
+  0%{opacity:0;transform:translateY(22px)}
+  60%{opacity:1;transform:translateY(-4px)}
+  80%{transform:translateY(1px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(40px);transition:all 0.9s var(--spring-soft)}
+.reveal.active{opacity:1;transform:translateY(0)}
+
+/* Profile */
+.profile-section{
+  max-width:960px;margin:0 auto;padding:80px max(40px,8vw);
+  display:grid;grid-template-columns:240px 1fr;gap:60px;align-items:start;
+}
+.profile-photo{
+  width:240px;height:300px;border-radius:22px;overflow:hidden;
+  background:linear-gradient(135deg,#e8e8ed,#d2d2d7);
+  transition:all 0.55s var(--spring-bouncy);
+  position:relative;
+}
+.profile-photo::after{
+  content:'';position:absolute;inset:0;border-radius:22px;
+  background:linear-gradient(135deg,rgba(255,255,255,0.2) 0%,transparent 50%);
+  pointer-events:none;
+}
+.profile-photo:hover{transform:scale(1.025);box-shadow:0 20px 60px rgba(0,0,0,0.1)}
+.profile-photo img{width:100%;height:100%;object-fit:cover}
+.profile-info h2{font-size:24px;font-weight:720;letter-spacing:-0.5px;margin-bottom:14px}
+.profile-info p{font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:18px}
+.highlight{
+  display:inline-block;padding:3px 12px;
+  background:rgba(0,113,227,0.07);color:var(--blue);
+  font-size:13px;font-weight:540;border-radius:8px;
+  margin-right:8px;margin-bottom:8px;
+  transition:all 0.3s var(--spring-bouncy);
+}
+.highlight:hover{background:rgba(0,113,227,0.12);transform:translateY(-1px)}
+
+/* Timeline */
+.timeline-section{max-width:960px;margin:0 auto;padding:0 max(40px,8vw) 80px}
+.section-label{font-size:13px;font-weight:600;color:var(--blue);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-size:clamp(24px,3.5vw,38px);font-weight:720;letter-spacing:-1px;margin-bottom:42px}
+
+.timeline{position:relative;padding-left:34px}
+.timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1.5px;background:linear-gradient(180deg,#d2d2d7 0%,rgba(210,210,215,0) 100%)}
+
+.tl-item{position:relative;margin-bottom:42px}
+.tl-dot{
+  position:absolute;left:-34px;top:5px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--blue);border:2.5px solid var(--bg);
+  box-shadow:0 0 0 1.5px var(--blue);
+  transition:all 0.45s var(--spring-bouncy);
+}
+.tl-item:hover .tl-dot{transform:scale(1.4);box-shadow:0 0 0 4px rgba(0,113,227,0.15),0 0 0 1.5px var(--blue)}
+.tl-year{font-size:12px;font-weight:640;color:var(--blue);letter-spacing:0.5px;margin-bottom:4px}
+.tl-title{font-size:17px;font-weight:640;color:var(--text);margin-bottom:4px}
+.tl-desc{font-size:14px;color:var(--text-secondary);line-height:1.65}
+.tl-tag{
+  display:inline-block;font-size:11px;font-weight:540;color:#424245;background:#e8e8ed;
+  padding:2px 10px;border-radius:6px;margin-top:8px;
+  transition:all 0.3s var(--spring-bouncy)
+}
+.tl-item:hover .tl-tag{background:#d2d2d7}
+
+/* Skills Grid */
+.skills-section{max-width:960px;margin:0 auto;padding:0 max(40px,8vw) 80px}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.skill-card{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.08) 0%,rgba(255,255,255,0.0) 40%,rgba(255,255,255,0.03) 100%),
+    rgba(255,255,255,0.32);
+  backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
+  border-radius:20px;padding:26px;border:0.5px solid var(--glass-border);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.3),
+    0 1px 4px rgba(0,0,0,0.02);
+  transition:all 0.5s var(--spring-bouncy);
+  position:relative;overflow:hidden;
+}
+.skill-card::before{
+  content:'';position:absolute;inset:0;border-radius:20px;
+  background:radial-gradient(ellipse 120% 80% at var(--mx,50%) var(--my,50%),rgba(255,255,255,0.12) 0%,transparent 60%);
+  opacity:0;transition:opacity 0.6s;pointer-events:none;
+}
+.skill-card:hover{
+  transform:translateY(-5px);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0.12) 0%,rgba(255,255,255,0.0) 35%,rgba(255,255,255,0.05) 100%),
+    rgba(255,255,255,0.5);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.35),
+    0 16px 48px rgba(0,0,0,0.04);
+}
+.skill-card:hover::before{opacity:1}
+.skill-icon{font-size:30px;margin-bottom:14px}
+.skill-name{font-size:15px;font-weight:640;margin-bottom:6px}
+.skill-level{font-size:12px;color:var(--text-secondary)}
+
+/* Resume CTA */
+.resume-cta{max-width:960px;margin:0 auto;padding:60px max(40px,8vw);text-align:center}
+.resume-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:14px 38px;
+  background:linear-gradient(135deg,rgba(10,132,255,0.85),rgba(0,113,227,0.9));
+  color:white;font-size:14px;font-weight:540;border:none;border-radius:980px;cursor:pointer;
+  border:0.5px solid rgba(255,255,255,0.2);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:inset 0 0.5px 0 rgba(255,255,255,0.25),0 2px 14px rgba(0,113,227,0.15);
+  transition:all 0.4s var(--spring-bouncy);
+}
+.resume-btn:hover{transform:scale(1.05);box-shadow:0 6px 26px rgba(0,113,227,0.32);background:linear-gradient(135deg,#0091FF,var(--blue))}
+.resume-btn:active{transform:scale(0.95)}
+.resume-note{margin-top:18px;font-size:14px;color:var(--text-secondary)}
+
+/* Footer */
+.footer{background:#1d1d1f;color:#a1a1a6;padding:52px max(40px,8vw) 36px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;padding-bottom:36px;border-bottom:0.5px solid #333}
+.footer h4{color:#f5f5f7;font-size:13px;font-weight:620;margin-bottom:14px}
+.footer a{display:block;font-size:13px;color:#a1a1a6;margin-bottom:9px;transition:color 0.25s var(--spring-soft)}
+.footer a:hover{color:#f5f5f7}
+.footer-brand{font-size:20px;font-weight:700;color:#f5f5f7;margin-bottom:10px}
+.footer-brand span{color:var(--blue-soft)}
+.footer p{font-size:13px;line-height:1.6;margin-bottom:18px;color:#a1a1a6}
+.footer-bottom{padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-tertiary)}
+
+@media(max-width:768px){
+  .nav{left:14px;transform:none;gap:14px;padding:0 18px}
+  .nav-links,.nav-cta{display:none}.hamburger{display:flex;order:-1}
+  .nav-logo{order:1}
+  .page-hero{padding:130px 28px 44px}
+  .profile-section{grid-template-columns:1fr;padding:52px 28px;gap:36px}
+  .profile-photo{width:100%;height:260px}
+  .timeline-section,.skills-section{padding-left:28px;padding-right:28px}
+  .resume-cta{padding-left:28px;padding-right:28px}
+  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .footer{padding:44px 28px 28px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+}
+@media(max-width:480px){.skills-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo">Zhiqiang<span>.</span></a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="gallery.html">作品集</a>
+    <a href="about.html" class="active">关于我</a>
+    <a href="contact.html">联系</a>
+  </div>
+  <a href="contact.html" class="nav-cta">开始合作</a>
+  <button class="hamburger" id="hamburger" aria-label="菜单"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">首页</a>
+  <a href="gallery.html">作品集</a>
+  <a href="about.html" class="active">关于我</a>
+  <a href="contact.html">联系</a>
+  <a href="contact.html" style="color:var(--blue-soft)">开始合作</a>
+</div>
+
+<section class="page-hero">
+  <p class="page-tag">关于我</p>
+  <h1>镜头背后，<br><span>是故事在生长</span>。</h1>
+</section>
+
+<section class="profile-section reveal">
+  <div class="profile-photo">
+    <img src="https://picsum.photos/seed/avatar/400/500" alt="陈志强" loading="lazy">
+  </div>
+  <div class="profile-info">
+    <h2>陈志强</h2>
+    <p>戏剧影视文学专业背景，兼具扎实的文学叙事能力和全链路影像创作能力。擅长航拍摄影、风光摄影和纪录片创作，作品注重光影语言与情感表达。</p>
+    <p>在校期间担任党委宣传部新媒体中心主任，统筹全平台内容运营，年播放量超500万。具备从前期策划、拍摄执行到后期剪辑的完整项目经验。</p>
+    <div>
+      <span class="highlight">航拍摄影</span><span class="highlight">风光摄影</span>
+      <span class="highlight">影视编导</span><span class="highlight">剪辑制作</span>
+    </div>
+  </div>
+</section>
+
+<section class="timeline-section reveal">
+  <p class="section-label">经历</p>
+  <h2 class="section-title">一路走来的脚印。</h2>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><p class="tl-year">2024 — 至今</p><p class="tl-title">自由航拍摄影师 / 影像创作者</p><p class="tl-desc">承接航拍、风光、人像等多类型摄影项目，持续积累个人作品集。同步探索新媒体内容创作与手机影像评测方向。</p><span class="tl-tag">自由职业</span></div>
+    <div class="tl-item"><div class="tl-dot"></div><p class="tl-year">2023 — 2024</p><p class="tl-title">党委宣传部新媒体中心主任</p><p class="tl-desc">统筹抖音/视频号/B站全平台运营，建立内容生产SOP使采编效率提升30%，全平台年播放量突破500万+。</p><span class="tl-tag">校园经历</span></div>
+    <div class="tl-item"><div class="tl-dot"></div><p class="tl-year">2023 夏</p><p class="tl-title">陕西广电实习 — 编导助理</p><p class="tl-desc">参与官方宣传片拍摄制作流程，学习专业级影视项目从策划到交付的完整工作流。</p><span class="tl-tag">实习经历</span></div>
+    <div class="tl-item"><div class="tl-dot"></div><p class="tl-year">2022 — 2023</p><p class="tl-title">省级影像赛事获奖</p><p class="tl-desc">摄影作品在省级影像比赛中获奖，作品以光影运用和构图语言获得评委认可。</p><span class="tl-tag">获奖经历</span></div>
+    <div class="tl-item"><div class="tl-dot"></div><p class="tl-year">2021 — 2025</p><p class="tl-title">西安财经大学 · 戏剧影视文学专业</p><p class="tl-desc">系统学习影视叙事、视听语言、摄影构图等专业知识，为影像创作打下扎实理论基础。</p><span class="tl-tag">教育背景</span></div>
+  </div>
+</section>
+
+<section class="skills-section reveal">
+  <p class="section-label">技能</p>
+  <h2 class="section-title">用专业，打磨每一帧。</h2>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-icon">&#x1F3A5;</div><div class="skill-name">航拍摄影</div><div class="skill-level">大疆 Mavic 3 · 全链路掌控</div></div>
+    <div class="skill-card"><div class="skill-icon">&#x1F4F7;</div><div class="skill-name">风光摄影</div><div class="skill-level">佳能 R6 · 多场景经验</div></div>
+    <div class="skill-card"><div class="skill-icon">&#x1F39E;&#xFE0F;</div><div class="skill-name">视频剪辑</div><div class="skill-level">Premiere Pro / Final Cut Pro</div></div>
+    <div class="skill-card"><div class="skill-icon">&#x1F4F1;</div><div class="skill-name">手机影像评测</div><div class="skill-level">设备测评 · 主观影像体验</div></div>
+    <div class="skill-card"><div class="skill-icon">&#x270D;&#xFE0F;</div><div class="skill-name">内容策划</div><div class="skill-level">叙事构建 · 全平台内容运营</div></div>
+    <div class="skill-card"><div class="skill-icon">&#x1F4A1;</div><div class="skill-name">灯光布景</div><div class="skill-level">神牛 AD860III · 室内外布光</div></div>
+  </div>
+</section>
+
+<section class="resume-cta reveal">
+  <p class="section-label">简历</p>
+  <h2 class="section-title" style="margin-bottom:26px">想了解更多？</h2>
+  <button class="resume-btn" onclick="event.preventDefault();alert('请将真实简历PDF放在网站根目录，并修改此链接的href为简历文件路径。')">下载简历 PDF ↓</button>
+  <p class="resume-note">或将真实简历PDF放置在网站目录，修改上方链接即可</p>
+</section>
+
+<footer class="footer reveal">
+  <div class="footer-grid">
+    <div><div class="footer-brand">Zhiqiang<span>.</span></div><p>戏剧影视文学专业背景的航拍摄影师与影视创作者，致力于用镜头讲述动人的视觉故事。</p></div>
+    <div><h4>导航</h4><a href="index.html">首页</a><a href="gallery.html">作品集</a><a href="about.html">关于我</a><a href="contact.html">联系</a></div>
+    <div><h4>联系</h4><a href="mailto:1740188970@qq.com">邮箱联系</a><a href="contact.html">留言表单</a></div>
+    <div><h4>作品</h4><a href="gallery.html#landscape">风光摄影</a><a href="gallery.html#architecture">建筑摄影</a><a href="gallery.html#portrait">人像摄影</a></div>
+  </div>
+  <div class="footer-bottom"><span>&copy; 2026 陈志强. All rights reserved.</span><span>用 &#x2665; 和 HTML 制作</span></div>
+</footer>
+
+<script>
+/* Scroll Progress + Nav dock */
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('scrollProgress').style.width=h>0?(scrollY/h*100)+'%':'0%';
+  document.getElementById('nav').classList.toggle('docked',scrollY>20);
+});
+
+/* Mobile Menu Spring */
+(function(){
+  const menu=document.getElementById('mobileMenu'),btn=document.getElementById('hamburger');
+  let open=false;
+  btn.onclick=()=>{
+    open=!open;menu.classList.toggle('reveal',open);
+    document.body.style.overflow=open?'hidden':'';
+    const s=btn.children;
+    if(open){s[0].style.transform='rotate(45deg) translate(4px,4px)';s[1].style.opacity='0';s[2].style.transform='rotate(-45deg) translate(4px,-4px)'}
+    else{s[0].style.transform='';s[1].style.opacity='';s[2].style.transform=''}
+  };
+  menu.querySelectorAll('a').forEach(a=>a.onclick=()=>{
+    open=false;menu.classList.remove('reveal');document.body.style.overflow='';
+    const s=btn.children;s[0].style.transform='';s[1].style.opacity='';s[2].style.transform=''
+  });
+})();
+
+/* Dynamic Glass on Skill Cards */
+document.querySelectorAll('.skill-card').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    el.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+  });
+  el.addEventListener('mouseleave',()=>{el.style.setProperty('--mx','50%');el.style.setProperty('--my','50%')});
+});
+
+/* Scroll Reveal */
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('active');obs.unobserve(e.target)}})},{threshold:0.15,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
