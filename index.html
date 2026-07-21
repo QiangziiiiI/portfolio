@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="description" content="陈志强，航拍摄影师&影视创作者，擅长风光/建筑/人文摄影。大疆Mavic 3、佳能R6，从航拍到纪录片全链路创作。">
+<meta property="og:title" content="陈志强 — 航拍摄影师 / 影视创作者">
+<meta property="og:description" content="从航拍风光到纪录片，用镜头捕捉每一个动人瞬间。97张作品，6类题材。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://qz0114.top/">
+<meta property="og:image" content="https://qz0114.top/images/风光/2023-07-27%20232136.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <title>陈志强 — 航拍摄影师 / 影视创作者</title>
 <style>
 /* ===== iOS 26 Design System ===== */
@@ -436,19 +444,19 @@ a{color:inherit;text-decoration:none}
 <div class="stats-strip reveal">
   <div class="stat-item">
     <div class="stat-num" id="stat1">0</div>
-    <div class="stat-label">作品数量</div>
+    <div class="stat-label">精选作品</div>
   </div>
   <div class="stat-item">
-    <div class="stat-num" id="stat2">0</div>
-    <div class="stat-label">项目经验</div>
+    <div class="stat-num">6</div>
+    <div class="stat-label">创作题材</div>
   </div>
   <div class="stat-item">
-    <div class="stat-num" id="stat3">0</div>
-    <div class="stat-label">合作客户</div>
+    <div class="stat-num">5</div>
+    <div class="stat-label">年摄影经验</div>
   </div>
   <div class="stat-item">
-    <div class="stat-num" id="stat4">0</div>
-    <div class="stat-label">获奖经历</div>
+    <div class="stat-num">500<span style="font-size:24px">万+</span></div>
+    <div class="stat-label">年播放量</div>
   </div>
 </div>
 
@@ -592,9 +600,6 @@ const statsObs=new IntersectionObserver((entries)=>{
   entries.forEach(e=>{
     if(e.isIntersecting){
       countUp(document.getElementById('stat1'),97,'+');
-      countUp(document.getElementById('stat2'),15,'+');
-      countUp(document.getElementById('stat3'),8,'+');
-      countUp(document.getElementById('stat4'),3,'');
       statsObs.disconnect();
     }
   });

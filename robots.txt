@@ -1,0 +1,3 @@
+Sitemap: https://qz0114.top/sitemap.xml
+User-agent: *
+Allow: /
